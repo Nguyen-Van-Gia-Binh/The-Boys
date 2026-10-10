@@ -44,7 +44,7 @@ export default function ShopSection() {
           <MapPin className="mt-0.5 size-5 shrink-0 text-[#df8143]" />
           <div>
             <p>
-              Nhận giao hàng tại: <strong>ĐH FPT TP.HCM</strong>, <strong>KTX</strong> và <strong>Vinhomes Grand Park</strong>.
+              Chỉ giao hàng tại khuôn viên trường <strong>Đại học FPT cơ sở TP.HCM</strong>.
             </p>
             <p className="mt-1 text-xs text-[var(--brand-muted)] flex items-center gap-1">
               <Calendar className="size-3.5 text-[#315444]" />

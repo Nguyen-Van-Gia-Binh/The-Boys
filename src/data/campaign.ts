@@ -21,9 +21,9 @@ export const CAMPAIGN_INFO = {
     activity: "01 ngày thiện nguyện 'Một buổi sống cùng anh hùng trong thời bình', sinh hoạt ngoài trời và trực tiếp đọc thư tri ân gửi tặng các chiến sĩ.",
   },
   pickupLocations: [
-    "Đại học FPT cơ sở TP.HCM (Khu Công nghệ cao)",
-    "Ký túc xá Đại học FPT / Khu dân cư lân cận",
-    "Vinhomes Grand Park (Giao tại các sảnh Origami / Rainbow)",
+    "Khuôn viên Đại học FPT TP.HCM (Sảnh chính)",
+    "Khuôn viên Đại học FPT TP.HCM (Khu vực Căn tin)",
+    "Khuôn viên Đại học FPT TP.HCM (Giao tận phòng học / Thư viện)",
   ],
   pickupTimeSlots: [
     "08:00 - 09:00",
