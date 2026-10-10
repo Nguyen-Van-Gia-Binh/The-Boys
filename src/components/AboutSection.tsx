@@ -53,7 +53,7 @@ export default function AboutSection() {
 
       {/* Section 2: Nơi chúng mình sẽ đến (Hành trình) */}
       <section id="journey" className="bg-[#315444] px-5 py-16 text-[#f8f5ef] md:px-10 lg:py-24">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto max-w-7xl">
           <div className="text-center md:text-left">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#e6b057]">
               Sứ mệnh thiện nguyện

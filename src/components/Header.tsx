@@ -28,7 +28,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[var(--brand-surface-glass)] border-b border-[var(--brand-border)] transition-colors">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3.5 sm:px-6 lg:px-8">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-10">
         {/* Logo */}
         <a href="#top" className="flex items-center gap-2.5 group">
           <span className="flex size-10 items-center justify-center rounded-full bg-[#315444] text-[#f4f7f5] shadow-sm transition-transform group-hover:scale-105">
