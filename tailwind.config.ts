@@ -26,8 +26,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'sans-serif'],
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"Roboto"', 'system-ui', '-apple-system', 'sans-serif'],
+        serif: ['"Roboto"', 'Georgia', 'serif'],
       },
     },
   },
