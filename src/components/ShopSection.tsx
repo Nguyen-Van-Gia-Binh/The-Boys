@@ -30,7 +30,7 @@ export default function ShopSection() {
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#df8143]">
             Gian hàng sẻ chia
           </p>
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[var(--brand-heading)]">
+          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[var(--brand-heading)] font-serif">
             Mua một món nhỏ,<br />
             <span className="text-[#df8143]">góp một công lớn.</span>
           </h2>

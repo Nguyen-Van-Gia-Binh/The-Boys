@@ -20,7 +20,7 @@ export default function Hero() {
         </div>
 
         {/* Hero Heading: Roboto, zero kerning bug */}
-        <h1 className="text-[3.2rem] font-bold leading-[1.05] tracking-[-0.03em] text-[var(--brand-heading)] sm:text-6xl lg:text-[4.6rem]">
+        <h1 className="text-[3.2rem] font-bold leading-[1.08] tracking-tight text-[var(--brand-heading)] sm:text-6xl lg:text-[4.6rem] font-serif">
           Góp nắng yêu thương,<br />
           <em className="font-normal italic text-[#df8143]">
             tri ân ngàn người lính.

@@ -16,7 +16,7 @@ export default function AboutSection() {
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#df8143]">
               Câu chuyện của chúng mình
             </p>
-            <h2 className="text-3xl sm:text-5xl font-bold leading-tight text-[var(--brand-heading)] tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-bold leading-tight text-[var(--brand-heading)] tracking-tight font-serif">
               Hành trình dòng nước<br />
               <em className="font-normal italic text-[#df8143]">về nguồn yêu thương.</em>
             </h2>
@@ -58,7 +58,7 @@ export default function AboutSection() {
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#e6b057]">
               Sứ mệnh thiện nguyện
             </p>
-            <h2 className="text-3xl sm:text-5xl font-bold leading-tight tracking-tight">
+            <h2 className="text-3xl sm:text-5xl font-bold leading-tight tracking-tight font-serif">
               Một buổi sống cùng anh hùng<br />
               <em className="font-normal italic text-[#e6b057]">trong thời bình.</em>
             </h2>
