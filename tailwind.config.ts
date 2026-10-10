@@ -26,8 +26,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['"Roboto"', 'system-ui', '-apple-system', 'sans-serif'],
-        serif: ['"Roboto"', 'Georgia', 'serif'],
+        sans: ['"Roboto"', 'system-ui', '-apple-system', 'Segoe UI', 'Arial', 'sans-serif'],
+        serif: ['"Roboto"', 'system-ui', '-apple-system', 'Segoe UI', 'Arial', 'sans-serif'],
       },
     },
   },
