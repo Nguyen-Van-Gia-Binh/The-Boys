@@ -1,0 +1,32 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Dòng Nước Về Nguồn — Trao yêu thương, tri ân anh hùng",
+  description: "Dự án thiện nguyện gây quỹ của sinh viên The Boys, chung tay trao tặng 20 phần quà tri ân các anh hùng thương binh nhiễm chất độc da cam.",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="vi" suppressHydrationWarning>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){}})()`,
+          }}
+        />
+      </head>
+      <body className="antialiased min-h-screen">
+        {children}
+      </body>
+    </html>
+  );
+}

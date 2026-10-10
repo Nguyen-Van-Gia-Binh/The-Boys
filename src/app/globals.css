@@ -1,0 +1,63 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-bg: #faf6f0;
+  --brand-surface: #ffffff;
+  --brand-surface-alt: #f4ede3;
+  --brand-surface-glass: rgba(255, 255, 255, 0.85);
+  --brand-surface-glass-hover: rgba(255, 255, 255, 0.95);
+  --brand-border: #e8ded1;
+  --brand-text: #2d3732;
+  --brand-heading: #17241d;
+  --brand-muted: #6f7c75;
+  --brand-primary: #315444;
+  --brand-primary-hover: #243e33;
+  --brand-accent: #df8143;
+  --brand-accent-hover: #ca6f33;
+  --brand-gold: #e6b057;
+}
+
+.dark {
+  --brand-bg: #111714;
+  --brand-surface: #19221d;
+  --brand-surface-alt: #202b25;
+  --brand-surface-glass: rgba(25, 34, 29, 0.85);
+  --brand-surface-glass-hover: rgba(25, 34, 29, 0.95);
+  --brand-border: #2a3a31;
+  --brand-text: #e1e9e4;
+  --brand-heading: #f3f8f5;
+  --brand-muted: #98a79f;
+  --brand-primary: #3d6854;
+  --brand-primary-hover: #4e8068;
+  --brand-accent: #e58d53;
+  --brand-accent-hover: #f0a06c;
+  --brand-gold: #f0c985;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--brand-bg);
+  color: var(--brand-text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--brand-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--brand-border);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-muted);
+}
