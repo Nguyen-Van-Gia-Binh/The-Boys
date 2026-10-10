@@ -1,50 +1,60 @@
 "use client";
 
 import React from "react";
-import { Sparkles, ArrowRight, Gift } from "lucide-react";
+import { Sparkles, ArrowRight, Gift, Tag, Flame } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function VoucherBanner() {
   const { voucherBenefit, subtotal, setIsCartOpen } = useCart();
 
   return (
-    <section id="vouchers" className="bg-gradient-to-r from-[#df8143]/15 via-[#e6b057]/15 to-[#315444]/15 border-b border-[var(--brand-border)] py-3 px-4">
-      <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm">
-        <div className="flex items-center gap-2.5 flex-wrap justify-center sm:justify-start">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#df8143] px-2.5 py-1 text-[11px] font-bold text-white shadow-sm">
-            <Sparkles className="size-3.5" />
-            ƯU ĐÃI DEBUT 13/10
+    <div className="relative z-30 bg-gradient-to-r from-[#243e33] via-[#315444] to-[#243e33] text-[#fffdfa] py-2.5 px-4 shadow-sm border-b border-[#3d6854]">
+      <div className="mx-auto max-w-7xl flex flex-col md:flex-row items-center justify-between gap-2.5 text-xs sm:text-sm">
+        {/* Left: Tag + Headline */}
+        <div className="flex items-center gap-2.5 flex-wrap justify-center md:justify-start">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#df8143] px-3 py-0.5 text-[11px] font-extrabold text-white shadow-sm tracking-wide">
+            <Flame className="size-3.5 fill-white" />
+            DEBUT 13/10
           </span>
-          <span className="font-semibold text-[var(--brand-heading)]">
-            Đặt sớm nhận Voucher giảm 10% — 15% cho ngày Workshop 17/10:
+          <span className="font-bold tracking-tight text-white flex items-center gap-1.5">
+            Ưu đãi đặt sớm sự kiện 17/10:
           </span>
-          <span className="text-[var(--brand-muted)] hidden lg:inline">
-            Đơn từ 59k (giảm 10%), từ 89k (giảm 10% mọi combo), từ 149k (giảm 15% VIP).
-          </span>
+          <div className="hidden lg:flex items-center gap-2 text-xs">
+            <span className="inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-0.5 font-medium text-[#f0c985]">
+              <Tag className="size-3" /> &gt;59k: Giảm 10%
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-md bg-white/10 px-2 py-0.5 font-medium text-[#f0c985]">
+              <Tag className="size-3" /> &gt;89k: Giảm 10% All
+            </span>
+            <span className="inline-flex items-center gap-1 rounded-md bg-[#e6b057]/20 px-2 py-0.5 font-bold text-[#e6b057]">
+              ⭐ &gt;149k: Giảm 15% VIP
+            </span>
+          </div>
         </div>
 
-        {/* Voucher Status pill */}
-        <div className="flex items-center gap-2">
+        {/* Right: Dynamic Cart Voucher CTA */}
+        <div className="flex items-center gap-3">
           {voucherBenefit.current ? (
             <button
               onClick={() => setIsCartOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#315444] px-3 py-1 font-semibold text-white text-xs hover:bg-[#243e33] transition"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#e6b057] px-3.5 py-1 font-bold text-[#1a2820] text-xs shadow-md hover:bg-[#f0c985] transition active:scale-95"
             >
-              <Gift className="size-3.5 text-[#e6b057]" />
+              <Gift className="size-3.5 fill-[#1a2820]" />
               {voucherBenefit.current.title}
               <ArrowRight className="size-3" />
             </button>
           ) : (
             <button
               onClick={() => setIsCartOpen(true)}
-              className="inline-flex items-center gap-1 text-[var(--brand-accent)] font-semibold text-xs hover:underline"
+              className="inline-flex items-center gap-1.5 rounded-full bg-white/15 hover:bg-white/25 px-3 py-1 font-semibold text-xs text-[#f0c985] transition border border-white/20 active:scale-95"
             >
-              Mua thêm {voucherBenefit.neededForNext.toLocaleString("vi-VN")}đ nhận voucher
+              <Sparkles className="size-3 text-[#e6b057]" />
+              <span>Mua thêm <strong>{voucherBenefit.neededForNext.toLocaleString("vi-VN")}đ</strong> để nhận voucher</span>
               <ArrowRight className="size-3" />
             </button>
           )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
