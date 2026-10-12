@@ -46,7 +46,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Combo indicator */}
         {product.isCombo && (
           <span className="absolute right-3 top-3 rounded-full bg-[#315444] px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
-            Workshop 17/10
+            Combo 17/10
           </span>
         )}
 

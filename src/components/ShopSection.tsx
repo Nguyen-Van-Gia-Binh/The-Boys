@@ -14,7 +14,7 @@ export default function ShopSection() {
     { id: "snack", label: "Ăn vặt & Bánh tráng", icon: UtensilsCrossed },
     { id: "drink", label: "Đồ uống & Cafe", icon: Coffee },
     { id: "flower", label: "Hoa tươi tự gói", icon: Flower2 },
-    { id: "combo", label: "Combo Workshop 17/10", icon: Gift },
+    { id: "combo", label: "Combo 17/10", icon: Gift },
   ];
 
   const filteredProducts =
