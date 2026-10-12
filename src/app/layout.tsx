@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ZaloButton from "@/components/ZaloButton";
 
 export const metadata: Metadata = {
   title: "Dòng Nước Về Nguồn — Trao yêu thương, tri ân anh hùng",
@@ -33,6 +34,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen">
         {children}
+        <ZaloButton />
       </body>
     </html>
   );

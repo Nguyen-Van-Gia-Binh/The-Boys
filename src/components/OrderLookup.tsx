@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, Loader2, Phone, Hash, Info } from "lucide-react";
+import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, Loader2, Phone, Hash, Info, MessageCircle } from "lucide-react";
 
 interface OrderResult {
   orderId: string;
@@ -42,7 +42,10 @@ export default function OrderLookup() {
         params.set("phone", inputValue.trim());
       }
 
-      const res = await fetch(`/api/orders/lookup?${params.toString()}`);
+      params.set("_t", Date.now().toString());
+      const res = await fetch(`/api/orders/lookup?${params.toString()}`, {
+        cache: "no-store",
+      });
       const data = await res.json();
 
       if (!res.ok || !data.success) {
@@ -192,11 +195,20 @@ export default function OrderLookup() {
           </div>
           <h3 className="text-base font-bold text-[var(--brand-heading)]">Không tìm thấy đơn hàng</h3>
           <p className="mt-1 text-sm text-[var(--brand-muted)]">
-            Không có đơn hàng nào matching với <strong>{searchType === "orderId" ? "mã" : "số điện thoại"}</strong> bạn nhập.
+            Không có đơn hàng nào khớp với <strong>{searchType === "orderId" ? "mã" : "số điện thoại"}</strong> bạn nhập.
           </p>
           <p className="mt-2 text-xs text-[var(--brand-muted)]">
-            Hãy kiểm tra lại thông tin hoặc liên hệ The Boys để được hỗ trợ.
+            Hãy kiểm tra lại thông tin hoặc nhắn Zalo để được hỗ trợ.
           </p>
+          <a
+            href="https://zalo.me/0916532006"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0068FF] text-white text-sm font-semibold hover:bg-[#0057e0] active:scale-95 transition shadow-md shadow-blue-500/20"
+          >
+            <MessageCircle className="size-4" />
+            Zalo hỗ trợ: 0916 532 006
+          </a>
         </div>
       )}
 
@@ -286,6 +298,20 @@ export default function OrderLookup() {
           })}
         </div>
       )}
+
+      {/* Support footer */}
+      <div className="mt-8 flex items-center justify-center gap-2 text-xs text-[var(--brand-muted)]">
+        <MessageCircle className="size-3.5 text-[#0068FF]" />
+        <span>Cần hỗ trợ? Nhắn Zalo:</span>
+        <a
+          href="https://zalo.me/0916532006"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-[#0068FF] hover:underline"
+        >
+          0916 532 006
+        </a>
+      </div>
     </div>
   );
 }
