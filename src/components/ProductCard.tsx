@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Check, Sparkles, Gift, ChevronDown } from "lucide-react";
+import { Plus, Check, Sparkles, Gift, ChevronDown, Calendar, MapPin } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 
@@ -17,6 +17,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const hasSizes = product.options?.sizes && product.options.sizes.length > 0;
   const currentSize = hasSizes ? product.options!.sizes![selectedSizeIdx] : undefined;
   const displayPrice = currentSize ? currentSize.price : product.price;
+
+  const isFlowerOrCombo = product.category === "flower" || product.category === "combo" || product.isCombo;
 
   const handleAdd = () => {
     addToCart(product, currentSize);
@@ -44,11 +46,15 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
 
         {/* Combo indicator */}
-        {product.isCombo && (
+        {product.isCombo ? (
           <span className="absolute right-3 top-3 rounded-full bg-[#315444] px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
             Combo 17/10
           </span>
-        )}
+        ) : product.category === "flower" ? (
+          <span className="absolute right-3 top-3 rounded-full bg-[#df8143] px-2.5 py-1 text-[11px] font-bold text-white shadow-md">
+            Nhận 17/10
+          </span>
+        ) : null}
 
         {/* Combo pre-order gift ribbon */}
         {product.comboGift && (
@@ -74,6 +80,14 @@ export function ProductCard({ product }: ProductCardProps) {
         <p className="mt-2 text-xs leading-relaxed text-[var(--brand-muted)] line-clamp-3">
           {product.note}
         </p>
+
+        {/* Thông tin nhận hàng đặc thù cho Hoa & Combo */}
+        {isFlowerOrCombo && (
+          <div className="mt-2.5 flex items-center gap-1.5 rounded-xl border border-rose-200/80 dark:border-rose-900/50 bg-rose-50/70 dark:bg-rose-950/30 px-2.5 py-1.5 text-[11px] font-semibold text-rose-700 dark:text-rose-300">
+            <Calendar className="size-3.5 shrink-0 text-rose-500" />
+            <span>Nhận <strong>17/10</strong> tại <strong>Sảnh Gương</strong> (từ 8h sáng)</span>
+          </div>
+        )}
 
         {/* Combo Pre-Order Benefit Box */}
         {product.comboGift && (

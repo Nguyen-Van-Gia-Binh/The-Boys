@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift, Copy, Check } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift, Copy, Check, Calendar, MapPin, Clock } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CAMPAIGN_INFO } from "@/data/campaign";
 import { OrderFormData, OrderPayload } from "@/types";
@@ -27,6 +27,10 @@ export default function CartDrawer() {
     addPastOrder,
   } = useCart();
 
+  const hasFlowerOrCombo = items.some(
+    (it) => it.product.category === "flower" || it.product.category === "combo" || it.product.isCombo
+  );
+
   const [formData, setFormData] = useState<OrderFormData>({
     name: "",
     email: "",
@@ -39,6 +43,28 @@ export default function CartDrawer() {
     customPickupTime: "",
     paymentMethod: "bank_transfer",
   });
+
+  // Tự động chuyển mặc định ngày nhận thành 17/10 và địa điểm Sảnh Gương khi giỏ hàng có Hoa hoặc Combo
+  useEffect(() => {
+    if (hasFlowerOrCombo) {
+      setFormData((prev) => {
+        const needDateUpdate = !prev.pickupDate || prev.pickupDate < "2026-10-17";
+        const needLocationUpdate =
+          !prev.pickupLocation ||
+          prev.pickupLocation.includes("Sảnh chính") ||
+          !prev.pickupLocation.includes("Sảnh Gương");
+
+        if (needDateUpdate || needLocationUpdate) {
+          return {
+            ...prev,
+            pickupDate: needDateUpdate ? "2026-10-17" : prev.pickupDate,
+            pickupLocation: needLocationUpdate ? CAMPAIGN_INFO.pickupLocations[0] : prev.pickupLocation,
+          };
+        }
+        return prev;
+      });
+    }
+  }, [hasFlowerOrCombo]);
 
   const [orderCode, setOrderCode] = useState(() => `DH${Math.floor(1000 + Math.random() * 9000)}`);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -63,6 +89,11 @@ export default function CartDrawer() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    // Nếu đơn có hoa hoặc combo, không cho chọn ngày trước 17/10
+    if (name === "pickupDate" && hasFlowerOrCombo && value < "2026-10-17") {
+      setFormData((prev) => ({ ...prev, pickupDate: "2026-10-17" }));
+      return;
+    }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -77,6 +108,11 @@ export default function CartDrawer() {
 
     if (!formData.name.trim() || !formData.phone.trim()) {
       setErrorMessage("Vui lòng điền họ tên và số điện thoại.");
+      return;
+    }
+
+    if (hasFlowerOrCombo && formData.pickupDate < "2026-10-17") {
+      setErrorMessage("Đơn hàng có chứa Hoa hoặc Combo Workshop chỉ bắt đầu nhận từ ngày 17/10/2026.");
       return;
     }
 
@@ -208,6 +244,12 @@ export default function CartDrawer() {
                     <p><strong>Người nhận:</strong> {successOrder.name} ({successOrder.phone})</p>
                     <p><strong>Địa điểm:</strong> {successOrder.pickupLocation}</p>
                     <p><strong>Thời gian:</strong> {successOrder.pickupDate} ({successOrder.pickupTime})</p>
+                    {successOrder.pickupLocation.includes("Sảnh Gương") && (
+                      <div className="rounded-xl border border-[#df8143]/30 bg-[#df8143]/10 p-2.5 text-xs text-[#b93815] dark:text-[#f39c5b] font-bold flex items-center gap-2">
+                        <Sparkles className="size-4 shrink-0 text-[#df8143]" />
+                        <span>Hẹn gặp bạn tại <strong>Sảnh Gương (Workshop)</strong> từ 08:00 sáng ngày 17/10 nhé!</span>
+                      </div>
+                    )}
                     {successOrder.giftSummary && (
                       <p className="rounded-xl bg-[#df8143]/15 p-2.5 font-bold text-[#b93815] dark:text-[#f39c5b] flex items-center gap-1.5">
                         <Gift className="size-4 shrink-0 text-[#df8143]" />
@@ -422,6 +464,45 @@ export default function CartDrawer() {
                     </div>
                   </div>
 
+                  {/* THÔNG BÁO GIAO NHẬN HOA & COMBO 17/10 TẠI SẢNH GƯƠNG */}
+                  {hasFlowerOrCombo && (
+                    <div className="mt-4 overflow-hidden rounded-2xl border-2 border-[#df8143] bg-gradient-to-br from-[#df8143]/15 via-[#df8143]/8 to-[#df8143]/3 p-4 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#df8143] to-[#b93815] text-white shadow-md shadow-[#df8143]/20">
+                          <Sparkles className="size-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-[#b93815] dark:text-[#f39c5b]">
+                              Lưu ý nhận Hoa tươi & Combo 17/10
+                            </h4>
+                            <span className="rounded-full bg-[#df8143] px-2 py-0.5 text-[10px] font-extrabold text-white">
+                              17/10/2026
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[12px] leading-relaxed text-[var(--brand-text)] font-medium">
+                            Để đảm bảo <strong>hoa tươi mới nhất</strong> và kịp thời cho các hoạt động trải nghiệm workshop, đơn hàng có <strong>Hoa hoặc Combo</strong> sẽ được giao nhận theo lịch sau:
+                          </p>
+
+                          <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#df8143]/30 bg-[var(--brand-surface)]/95 p-3 text-[11.5px] font-semibold text-[var(--brand-heading)]">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="size-4 text-[#df8143] shrink-0" />
+                              <span>Ngày nhận: <strong className="text-[#b93815] dark:text-[#f39c5b]">17/10/2026</strong> (Ngày hội Workshop)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="size-4 text-[#315444] dark:text-emerald-400 shrink-0" />
+                              <span>Địa điểm nhận: <strong className="text-[#315444] dark:text-emerald-400">Sảnh Gương — Nơi tổ chức Workshop</strong></span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock className="size-4 text-[#df8143] shrink-0" />
+                              <span>Thời gian bàn giao: <strong>Từ 08:00 sáng trở đi</strong></span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* FORM THÔNG TIN NHẬN HÀNG */}
                   <form onSubmit={handleSubmitOrder} className="mt-6 space-y-3.5">
                     <p className="text-sm font-bold text-[#315444] uppercase tracking-wide">
@@ -498,21 +579,44 @@ export default function CartDrawer() {
 
                     {/* Ngày nhận */}
                     <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      Ngày nhận <span className="text-red-500">*</span>
+                      <div className="flex items-center justify-between">
+                        <span>Ngày nhận <span className="text-red-500">*</span></span>
+                        {hasFlowerOrCombo && (
+                          <span className="text-[11px] font-bold text-[#b93815] dark:text-[#f39c5b]">
+                            Hoa & Combo nhận từ 17/10
+                          </span>
+                        )}
+                      </div>
                       <input
                         required
                         type="date"
                         name="pickupDate"
-                        min={todayStr}
+                        min={hasFlowerOrCombo ? "2026-10-17" : todayStr}
                         value={formData.pickupDate}
                         onChange={handleInputChange}
                         className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
                       />
+                      {hasFlowerOrCombo ? (
+                        <p className="mt-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
+                          🌸 Đơn có Hoa/Combo: Nhận từ ngày <strong>17/10/2026</strong> tại Sảnh Gương để đảm bảo hoa tươi mới nhất cho Workshop.
+                        </p>
+                      ) : (
+                        <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
+                          Đồ ăn vặt & thức uống có thể nhận từ ngày 13/10/2026.
+                        </p>
+                      )}
                     </label>
 
                     {/* Địa điểm nhận */}
                     <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      Địa điểm nhận <span className="text-red-500">*</span>
+                      <div className="flex items-center justify-between">
+                        <span>Địa điểm nhận <span className="text-red-500">*</span></span>
+                        {hasFlowerOrCombo && (
+                          <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+                            Khuyên chọn Sảnh Gương
+                          </span>
+                        )}
+                      </div>
                       <select
                         required
                         name="pickupLocation"
@@ -526,11 +630,23 @@ export default function CartDrawer() {
                           </option>
                         ))}
                       </select>
+                      {hasFlowerOrCombo && (
+                        <p className="mt-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                          📍 Nhận tại <strong>Sảnh Gương</strong> (nơi tổ chức Workshop) để tham gia cắm hoa, in ảnh và viết thiệp tri ân trọn vẹn nhất!
+                        </p>
+                      )}
                     </label>
 
                     {/* Khung giờ nhận */}
                     <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      Khung giờ nhận <span className="text-red-500">*</span>
+                      <div className="flex items-center justify-between">
+                        <span>Khung giờ nhận <span className="text-red-500">*</span></span>
+                        {hasFlowerOrCombo && (
+                          <span className="text-[11px] font-bold text-[#315444] dark:text-emerald-400">
+                            Từ 08:00 sáng trở đi
+                          </span>
+                        )}
+                      </div>
                       <select
                         required
                         name="pickupTime"
@@ -544,6 +660,11 @@ export default function CartDrawer() {
                           </option>
                         ))}
                       </select>
+                      {hasFlowerOrCombo && (
+                        <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
+                          ⏰ Hoa và Combo bắt đầu sẵn sàng bàn giao từ <strong>08:00 sáng</strong> ngày 17/10.
+                        </p>
+                      )}
                     </label>
 
                     {/* Custom pickup time if chosen */}

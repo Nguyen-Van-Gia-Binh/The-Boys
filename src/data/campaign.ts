@@ -21,6 +21,7 @@ export const CAMPAIGN_INFO = {
     activity: "01 ngày thiện nguyện 'Một buổi sống cùng anh hùng trong thời bình', sinh hoạt ngoài trời và trực tiếp đọc thư tri ân gửi tặng các chiến sĩ.",
   },
   pickupLocations: [
+    "Sảnh Gương — Nơi tổ chức Workshop (Ngày 17/10)",
     "Khuôn viên Đại học FPT TP.HCM (Sảnh chính)",
     "Khuôn viên Đại học FPT TP.HCM (Khu vực Căn tin)",
     "Khuôn viên Đại học FPT TP.HCM (Giao tận phòng học / Thư viện)",
@@ -28,6 +29,7 @@ export const CAMPAIGN_INFO = {
   pickupTimeSlots: [
     "08:00 - 09:00",
     "09:00 - 10:00",
+    "10:00 - 11:00",
     "11:00 - 12:00",
     "13:00 - 14:00",
     "14:00 - 15:00",
