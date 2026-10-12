@@ -36,9 +36,10 @@ export const CAMPAIGN_INFO = {
     "custom",
   ],
   banking: {
-    bankId: "MB", // Ngân hàng Quân Đội MBBank hoặc Vietcombank
-    accountNo: "0906888999", // Sẽ thay bằng STK thật của nhóm
-    accountName: "THE BOYS PROJECT FPT",
+    bankId: "SHB", // Ngân hàng TMCP Sài Gòn - Hà Nội
+    bankName: "SHB (Sài Gòn - Hà Nội)",
+    accountNo: "1314532311",
+    accountName: "NGUYEN THE VINH",
     memoPrefix: "THEBOYS",
   },
   contacts: {

@@ -548,7 +548,7 @@ export default function CartDrawer() {
                           {CAMPAIGN_INFO.banking.accountName}
                         </p>
                         <p className="text-xs text-[var(--brand-text)] font-medium">
-                          NH: {CAMPAIGN_INFO.banking.bankId} · STK: {CAMPAIGN_INFO.banking.accountNo}
+                          NH: {CAMPAIGN_INFO.banking.bankName || CAMPAIGN_INFO.banking.bankId} · STK: {CAMPAIGN_INFO.banking.accountNo}
                         </p>
                         <div className="rounded-lg bg-[var(--brand-surface)] p-2 text-xs border border-[var(--brand-border)]">
                           Nội dung CK bắt buộc:{" "}
