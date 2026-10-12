@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift, Copy, Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CAMPAIGN_INFO } from "@/data/campaign";
 import { OrderFormData, OrderPayload } from "@/types";
@@ -40,6 +40,17 @@ export default function CartDrawer() {
     paymentMethod: "cash",
   });
 
+  const [orderCode, setOrderCode] = useState(() => `DH${Math.floor(1000 + Math.random() * 9000)}`);
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  const copyToClipboard = (text: string, key: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 2000);
+    }
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successOrder, setSuccessOrder] = useState<OrderPayload | null>(null);
@@ -73,6 +84,7 @@ export default function CartDrawer() {
 
     const payload: OrderPayload = {
       ...formData,
+      id: orderCode,
       items: items.map((it) => ({
         productId: it.product.id,
         productName: it.product.name,
@@ -101,11 +113,12 @@ export default function CartDrawer() {
       if (res.ok && data.success) {
         const confirmedOrder: OrderPayload = {
           ...payload,
-          id: data.orderId,
+          id: data.orderId || orderCode,
         };
         addPastOrder(confirmedOrder);
         setSuccessOrder(confirmedOrder);
         clearCart();
+        setOrderCode(`DH${Math.floor(1000 + Math.random() * 9000)}`);
       } else {
         setErrorMessage(data.message || "Không thể gửi đơn. Vui lòng thử lại.");
       }
@@ -116,9 +129,12 @@ export default function CartDrawer() {
     }
   };
 
+  // Nội dung chuyển khoản chuẩn hóa
+  const transferMemo = `THEBOYS ${orderCode}`;
+
   // Tạo URL ảnh VietQR tự động
   const vietQrUrl = `https://img.vietqr.io/image/${CAMPAIGN_INFO.banking.bankId}-${CAMPAIGN_INFO.banking.accountNo}-compact2.png?amount=${total}&addInfo=${encodeURIComponent(
-    (formData.name || "Khach") + " " + (formData.phone || "SDT")
+    transferMemo
   )}&accountName=${encodeURIComponent(CAMPAIGN_INFO.banking.accountName)}`;
 
   return (
@@ -202,6 +218,75 @@ export default function CartDrawer() {
                     <p><strong>Tổng thanh toán:</strong> <span className="text-[#df8143] font-bold text-sm">{successOrder.total.toLocaleString("vi-VN")}đ</span></p>
                     <p><strong>Hình thức:</strong> {successOrder.paymentMethod === "cash" ? "Tiền mặt khi nhận" : "Chuyển khoản VietQR"}</p>
                   </div>
+
+                  {/* Hướng dẫn chuyển khoản VietQR nếu chọn bank_transfer */}
+                  {successOrder.paymentMethod === "bank_transfer" && (
+                    <div className="mt-4 rounded-2xl border-2 border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 text-center space-y-3 w-full">
+                      <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                        <QrCode className="size-4 text-emerald-600" />
+                        <span>Quét mã VietQR để thanh toán</span>
+                      </div>
+                      <div className="mx-auto size-52 overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-neutral-200">
+                        <img
+                          src={`https://img.vietqr.io/image/${CAMPAIGN_INFO.banking.bankId}-${CAMPAIGN_INFO.banking.accountNo}-compact2.png?amount=${successOrder.total}&addInfo=${encodeURIComponent(`THEBOYS ${successOrder.id}`)}&accountName=${encodeURIComponent(CAMPAIGN_INFO.banking.accountName)}`}
+                          alt="Mã QR chuyển khoản"
+                          className="h-full w-full object-contain"
+                        />
+                      </div>
+                      <div className="text-xs space-y-2 text-left bg-white dark:bg-neutral-900 rounded-xl p-3 border border-[var(--brand-border)]">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--brand-muted)]">Ngân hàng:</span>
+                          <span className="font-semibold text-[var(--brand-heading)]">{CAMPAIGN_INFO.banking.bankName || CAMPAIGN_INFO.banking.bankId}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--brand-muted)]">Số tài khoản:</span>
+                          <div className="flex items-center gap-1.5 font-semibold text-[var(--brand-heading)]">
+                            <span>{CAMPAIGN_INFO.banking.accountNo}</span>
+                            <button
+                              type="button"
+                              onClick={() => copyToClipboard(CAMPAIGN_INFO.banking.accountNo, "succ-stk")}
+                              className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                              title="Sao chép STK"
+                            >
+                              {copiedKey === "succ-stk" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--brand-muted)]">Số tiền:</span>
+                          <div className="flex items-center gap-1.5 font-bold text-[#df8143]">
+                            <span>{successOrder.total.toLocaleString("vi-VN")}đ</span>
+                            <button
+                              type="button"
+                              onClick={() => copyToClipboard(successOrder.total.toString(), "succ-amount")}
+                              className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                              title="Sao chép số tiền"
+                            >
+                              {copiedKey === "succ-amount" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-[var(--brand-muted)]">Nội dung CK:</span>
+                          <div className="flex items-center gap-1.5 font-bold text-[#b93815] dark:text-[#f39c5b]">
+                            <span>THEBOYS {successOrder.id}</span>
+                            <button
+                              type="button"
+                              onClick={() => copyToClipboard(`THEBOYS ${successOrder.id}`, "succ-memo")}
+                              className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                              title="Sao chép nội dung"
+                            >
+                              {copiedKey === "succ-memo" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
+                        ⚡ Hệ thống SePay sẽ tự động đối soát nội dung <strong>THEBOYS {successOrder.id}</strong> và chuyển đơn sang trạng thái "Đã thanh toán" trên hệ thống.
+                      </p>
+                    </div>
+                  )}
+
                   <p className="mt-4 text-xs text-[var(--brand-muted)]">
                     Cảm ơn bạn đã đồng hành cùng chiến dịch Dòng Nước Về Nguồn của nhóm The Boys!
                   </p>
@@ -532,12 +617,12 @@ export default function CartDrawer() {
 
                     {/* QR Code Chuyển khoản nếu chọn bank_transfer */}
                     {formData.paymentMethod === "bank_transfer" && (
-                      <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center space-y-2">
-                        <p className="text-xs font-bold text-[#315444] flex items-center justify-center gap-1.5">
+                      <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center space-y-3">
+                        <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#315444]">
                           <QrCode className="size-4 text-[#df8143]" />
-                          Quét mã để chuyển khoản nhanh VietQR
-                        </p>
-                        <div className="mx-auto size-56 overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-neutral-200">
+                          <span>Mã QR thanh toán VietQR (Tự động nhận diện)</span>
+                        </div>
+                        <div className="mx-auto size-52 overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-neutral-200">
                           <img
                             src={vietQrUrl}
                             alt="Mã QR chuyển khoản VietQR"
@@ -547,15 +632,55 @@ export default function CartDrawer() {
                         <p className="text-sm font-bold text-[var(--brand-heading)]">
                           {CAMPAIGN_INFO.banking.accountName}
                         </p>
-                        <p className="text-xs text-[var(--brand-text)] font-medium">
-                          NH: {CAMPAIGN_INFO.banking.bankName || CAMPAIGN_INFO.banking.bankId} · STK: {CAMPAIGN_INFO.banking.accountNo}
-                        </p>
-                        <div className="rounded-lg bg-[var(--brand-surface)] p-2 text-xs border border-[var(--brand-border)]">
-                          Nội dung CK bắt buộc:{" "}
-                          <strong className="text-[#df8143]">
-                            {formData.name.trim() || "Họ tên của bạn"} - {formData.phone.trim() || "SĐT của bạn"}
-                          </strong>
+
+                        <div className="text-xs space-y-2 text-left bg-[var(--brand-surface)] rounded-xl p-3 border border-[var(--brand-border)]">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[var(--brand-muted)]">Số tài khoản:</span>
+                            <div className="flex items-center gap-1.5 font-semibold text-[var(--brand-heading)]">
+                              <span>{CAMPAIGN_INFO.banking.bankId} - {CAMPAIGN_INFO.banking.accountNo}</span>
+                              <button
+                                type="button"
+                                onClick={() => copyToClipboard(CAMPAIGN_INFO.banking.accountNo, "form-stk")}
+                                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                                title="Sao chép STK"
+                              >
+                                {copiedKey === "form-stk" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[var(--brand-muted)]">Số tiền:</span>
+                            <div className="flex items-center gap-1.5 font-bold text-[#df8143]">
+                              <span>{total.toLocaleString("vi-VN")}đ</span>
+                              <button
+                                type="button"
+                                onClick={() => copyToClipboard(total.toString(), "form-amount")}
+                                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                                title="Sao chép số tiền"
+                              >
+                                {copiedKey === "form-amount" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[var(--brand-muted)]">Nội dung CK:</span>
+                            <div className="flex items-center gap-1.5 font-bold text-[#b93815] dark:text-[#f39c5b]">
+                              <span>{transferMemo}</span>
+                              <button
+                                type="button"
+                                onClick={() => copyToClipboard(transferMemo, "form-memo")}
+                                className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                                title="Sao chép nội dung"
+                              >
+                                {copiedKey === "form-memo" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                              </button>
+                            </div>
+                          </div>
                         </div>
+
+                        <p className="text-[11px] text-[var(--brand-muted)] italic">
+                          💡 Vui lòng giữ đúng nội dung <strong>{transferMemo}</strong> khi chuyển khoản để SePay tự động nhận diện đơn hàng của bạn!
+                        </p>
                       </div>
                     )}
 

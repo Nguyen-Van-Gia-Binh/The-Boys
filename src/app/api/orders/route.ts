@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const orderId = `DH-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+    const orderId = body.id || `DH${Math.floor(1000 + Math.random() * 9000)}`;
     const createdAt = new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" });
 
     const fullOrder: OrderPayload = {
@@ -31,6 +31,11 @@ export async function POST(req: NextRequest) {
       itemsList.push(`🎁 Quà tặng kèm: ${body.giftSummary}`);
     }
     const itemsSummary = itemsList.join("; ");
+
+    const initialStatus =
+      body.paymentMethod === "cash"
+        ? "Chờ xác nhận (Tiền mặt)"
+        : "Chờ chuyển khoản (VietQR)";
 
     // Gửi sang Google Sheets Webhook nếu có cấu hình
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
@@ -54,7 +59,7 @@ export async function POST(req: NextRequest) {
           total: body.total,
           paymentMethod: body.paymentMethod === "cash" ? "Tiền mặt khi nhận" : "Chuyển khoản VietQR",
           note: body.note || "",
-          status: "Chờ xác nhận",
+          status: initialStatus,
         };
 
         const res = await fetch(webhookUrl, {
