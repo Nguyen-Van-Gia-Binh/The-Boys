@@ -26,7 +26,8 @@ export default function MobileBottomNav() {
   return (
     <nav
       aria-label="Thanh điều hướng di động"
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[var(--brand-surface)]/95 backdrop-blur-xl border-t border-[var(--brand-border)] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.35)] px-3 pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom))]"
+      style={{ transform: "translateZ(0)" }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 w-full bg-white dark:bg-[#19221d] border-t border-[var(--brand-border)] shadow-[0_-6px_25px_rgba(0,0,0,0.12)] dark:shadow-[0_-6px_30px_rgba(0,0,0,0.5)] px-2 pt-2 pb-[max(0.6rem,env(safe-area-inset-bottom))]"
     >
       <div className="grid grid-cols-4 items-center">
         {/* 1. Trang chủ */}

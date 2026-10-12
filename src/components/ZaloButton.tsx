@@ -22,7 +22,7 @@ export default function ZaloButton() {
       <style>{`
         .zalo-fab {
           position: fixed;
-          bottom: 72px;
+          bottom: 74px;
           left: 14px;
           z-index: 39;
           display: flex;
@@ -36,6 +36,7 @@ export default function ZaloButton() {
           font-weight: 600;
           text-decoration: none;
           box-shadow: 0 4px 18px rgba(0,104,255,0.40);
+          transform: translateZ(0);
           transition: transform 0.15s, box-shadow 0.15s;
           font-family: inherit;
         }

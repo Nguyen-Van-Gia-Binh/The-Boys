@@ -10,7 +10,7 @@ export default function AboutSection() {
   return (
     <>
       {/* Section 1: Câu chuyện của chúng mình */}
-      <section id="about" className="border-y border-[var(--brand-border)] bg-[var(--brand-surface-alt)] px-5 py-16 md:px-10 lg:py-24">
+      <section id="about" className="w-full overflow-hidden border-y border-[var(--brand-border)] bg-[var(--brand-surface-alt)] px-5 py-16 md:px-10 lg:py-24">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
           <div>
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#df8143]">
@@ -52,7 +52,7 @@ export default function AboutSection() {
       </section>
 
       {/* Section 2: Nơi chúng mình sẽ đến (Hành trình) */}
-      <section id="journey" className="bg-[#315444] px-5 py-16 text-[#f8f5ef] md:px-10 lg:py-24">
+      <section id="journey" className="w-full overflow-hidden bg-[#315444] px-5 py-16 text-[#f8f5ef] md:px-10 lg:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="text-center md:text-left">
             <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#e6b057]">

@@ -23,7 +23,7 @@ export default function ShopSection() {
       : PRODUCTS.filter((item) => item.category === activeTab);
 
   return (
-    <section id="shop" className="mx-auto max-w-7xl px-5 py-16 md:px-10 lg:py-24">
+    <section id="shop" className="mx-auto max-w-7xl w-full overflow-hidden px-5 py-16 md:px-10 lg:py-24">
       {/* Title & Delivery Notice */}
       <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>

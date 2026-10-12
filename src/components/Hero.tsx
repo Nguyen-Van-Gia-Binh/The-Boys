@@ -6,21 +6,22 @@ import { CAMPAIGN_INFO } from "@/data/campaign";
 
 export default function Hero() {
   return (
-    <section id="top" className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-10 md:px-10 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:pb-28 lg:pt-16">
+    <section id="top" className="relative mx-auto grid max-w-7xl w-full items-center gap-12 px-5 pb-20 pt-8 sm:pt-10 md:px-10 lg:grid-cols-[1fr_1fr] lg:gap-16 lg:pb-28 lg:pt-16 overflow-hidden">
       {/* Soft Ambient Glows */}
       <div className="pointer-events-none absolute -left-10 top-10 -z-10 size-80 rounded-full bg-[#df8143]/10 blur-3xl" />
       <div className="pointer-events-none absolute right-10 top-20 -z-10 size-96 rounded-full bg-[#315444]/15 blur-3xl" />
 
       {/* Left Column: Heading & Info */}
-      <div className="max-w-xl">
+      <div className="max-w-xl w-full">
         {/* Project Tag */}
-        <div className="mb-7 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-[#df8143]">
-          <span className="h-px w-9 bg-[#df8143]" />
-          Dự án sinh viên FPT · The Boys
+        <div className="mb-6 sm:mb-7 inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-[#df8143]">
+          <span className="h-px w-8 sm:w-10 bg-[#df8143]" />
+          <span>Dự án sinh viên FPT · The Boys</span>
+          <span className="h-px w-8 sm:w-10 bg-[#df8143]" />
         </div>
 
-        {/* Hero Heading: Roboto, zero kerning bug */}
-        <h1 className="text-[3.2rem] font-bold leading-[1.08] tracking-tight text-[var(--brand-heading)] sm:text-6xl lg:text-[4.6rem] font-serif">
+        {/* Hero Heading */}
+        <h1 className="text-[2.2rem] sm:text-5xl lg:text-[4.4rem] font-bold leading-[1.14] tracking-tight text-[var(--brand-heading)] break-words font-serif">
           Góp nắng yêu thương,<br />
           <em className="font-normal italic text-[#df8143]">
             tri ân ngàn người lính.

@@ -33,7 +33,10 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[var(--brand-surface-glass)] border-b border-[var(--brand-border)] transition-colors">
+    <header
+      style={{ transform: "translateZ(0)" }}
+      className="fixed top-0 left-0 right-0 z-40 w-full backdrop-blur-md bg-[var(--brand-surface-glass)] border-b border-[var(--brand-border)] transition-colors shadow-sm"
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 md:px-10 py-3.5 sm:py-4">
         {/* Logo */}
         <a href="#top" className="flex items-center gap-2 sm:gap-2.5 group min-w-0">

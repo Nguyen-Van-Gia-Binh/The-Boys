@@ -14,12 +14,12 @@ import MobileBottomNav from "@/components/MobileBottomNav";
 export default function Home() {
   return (
     <CartProvider>
-      <div className="min-h-screen bg-[var(--brand-bg)] text-[var(--brand-text)] flex flex-col pb-16 md:pb-0 selection:bg-[#df8143] selection:text-white">
+      <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[var(--brand-bg)] text-[var(--brand-text)] flex flex-col pb-20 md:pb-0 selection:bg-[#df8143] selection:text-white">
         {/* Navigation Bar */}
         <Header />
 
         {/* Main Content Sections */}
-        <main className="flex-1">
+        <main className="flex-1 w-full max-w-full pt-[62px] sm:pt-[72px]">
           <Hero />
           <ShopSection />
           <AboutSection />
