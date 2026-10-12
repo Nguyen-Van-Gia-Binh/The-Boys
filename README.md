@@ -1,23 +1,6 @@
+![1791782419985](image/README/1791782419985.png)
+
 <div align="center">
-
-# 🌾 Dòng Nước Về Nguồn
-
-### *Góp nắng gửi yêu thương, tri ân ngàn người lính*
-
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-the--boys--sable--nine.vercel.app-315444?style=for-the-badge&labelColor=17241d)](https://the-boys-sable-nine.vercel.app)
-[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
-[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel)](https://vercel.com)
-
-<br/>
-
-**Nền tảng e-commerce thiện nguyện** được xây dựng bởi nhóm sinh viên **The Boys Project** — Đại học FPT TP.HCM.
-Toàn bộ doanh thu sẽ được quy đổi thành **20 phần quà tri ân** gửi tặng các anh hùng thương binh nhiễm chất độc da cam.
-
-<br/>
-
-</div>
 
 ---
 
@@ -36,58 +19,61 @@ Toàn bộ doanh thu sẽ được quy đổi thành **20 phần quà tri ân** 
 
 ## 🎯 Tổng Quan Dự Án
 
-| Thông tin | Chi tiết |
-|-----------|----------|
-| **Tên chiến dịch** | Hành Trình Dòng Nước Về Nguồn |
-| **Nhóm thực hiện** | The Boys Project — Sinh viên ĐH FPT TP.HCM |
-| **Mục tiêu gây quỹ** | 3.000.000đ → 20 phần quà tri ân thương binh |
-| **Ngày mở bán** | 13/10/2026 |
-| **Ngày Workshop** | 17/10/2026 |
-| **Website** | [the-boys-sable-nine.vercel.app](https://the-boys-sable-nine.vercel.app) |
-| **Liên hệ hỗ trợ** | Zalo: [0916 532 006](https://zalo.me/0916532006) |
+| Thông tin                     | Chi tiết                                                               |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| **Tên chiến dịch**    | Hành Trình Dòng Nước Về Nguồn                                    |
+| **Nhóm thực hiện**    | The Boys Project — Sinh viên ĐH FPT TP.HCM                           |
+| **Mục tiêu gây quỹ** | 3.000.000đ → 20 phần quà tri ân thương binh                      |
+| **Ngày mở bán**       | 13/10/2026                                                              |
+| **Ngày Workshop**       | 17/10/2026                                                              |
+| **Website**              | [the-boys-sable-nine.vercel.app](https://the-boys-sable-nine.vercel.app) |
+| **Liên hệ hỗ trợ**   | Zalo:[0916 532 006](https://zalo.me/0916532006)                          |
 
 ### 💝 Mỗi Phần Quà Tri Ân Bao Gồm
 
 > Dành tặng các cô chú thương binh nhiễm chất độc da cam — những người có chỉ số thương tật nặng, không còn người thân chăm sóc.
 
-| Quà tặng | Giá trị |
-|----------|---------|
-| 🥛 Hộp sữa Ensure Gold pha sẵn | 68.000đ |
-| 🍰 Hộp bánh bông lan Solite (18 cái) | 53.000đ |
-| 🥛 Lốc sữa dinh dưỡng Nutifood ít đường | 36.000đ |
+| Quà tặng                                          | Giá trị    |
+| --------------------------------------------------- | ------------ |
+| 🥛 Hộp sữa Ensure Gold pha sẵn                   | 68.000đ     |
+| 🍰 Hộp bánh bông lan Solite (18 cái)            | 53.000đ     |
+| 🥛 Lốc sữa dinh dưỡng Nutifood ít đường     | 36.000đ     |
 | 💌 Thư tri ân viết tay từ tấm lòng sinh viên | *Vô giá* |
 
 ---
 
 ## 🏗 Kiến Trúc Hệ Thống
 
-```
-┌──────────────────────────────────────────────────────────────────┐
-│                        KHÁCH HÀNG (Browser)                      │
-│  ┌──────────┐  ┌──────────┐  ┌─────────────┐  ┌──────────────┐  │
-│  │  Hero &   │  │ Gian hàng │  │ Giỏ hàng &  │  │  Tra cứu đơn │  │
-│  │  About    │  │ Sản phẩm  │  │  Checkout   │  │  /tra-cuu    │  │
-│  └──────────┘  └──────────┘  └──────┬──────┘  └──────┬───────┘  │
-│                                      │                │          │
-└──────────────────────────────────────┼────────────────┼──────────┘
-                                       │                │
-                              ┌────────▼────────┐  ┌───▼──────────┐
-                              │  POST /api/orders│  │GET /api/orders│
-                              │  (Tạo đơn mới)  │  │   /lookup     │
-                              └────────┬────────┘  └───┬──────────┘
-                                       │               │
-                              ┌────────▼───────────────▼──────────┐
-                              │    Google Apps Script Webhook       │
-                              │   ┌─────────┐    ┌─────────────┐  │
-                              │   │ doPost() │    │  doGet()    │  │
-                              │   │ Ghi đơn  │    │ Tra cứu đơn │  │
-                              │   └────┬─────┘    └──────┬──────┘  │
-                              │        │                 │         │
-                              │   ┌────▼─────────────────▼──────┐  │
-                              │   │      Google Sheets           │  │
-                              │   │   (Database miễn phí)        │  │
-                              │   └──────────────────────────────┘  │
-                              └────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph CLIENT["🖥️ KHÁCH HÀNG · Browser"]
+        A["🏠 Hero & About"]
+        B["🛍️ Gian hàng Sản phẩm"]
+        C["🛒 Giỏ hàng & Checkout"]
+        D["🔍 Tra cứu đơn /tra-cuu"]
+    end
+
+    C -->|"Đặt hàng"| E["📤 POST /api/orders"]
+    D -->|"Tìm kiếm"| F["📥 GET /api/orders/lookup"]
+
+    subgraph GAS["⚙️ Google Apps Script Webhook"]
+        G["📝 doPost · Ghi đơn vào Sheet"]
+        H["🔎 doGet · Đọc & trả kết quả"]
+    end
+
+    E --> G
+    F --> H
+
+    subgraph DB["💾 Google Sheets · Database miễn phí"]
+        I["📊 Bảng đơn hàng: Mã đơn · Trạng thái · Thanh toán"]
+    end
+
+    G --> I
+    H --> I
+
+    style CLIENT fill:#f8f4ee,stroke:#315444,stroke-width:2px,color:#17241d
+    style GAS fill:#e8f5e9,stroke:#315444,stroke-width:2px,color:#17241d
+    style DB fill:#fff3e0,stroke:#df8143,stroke-width:2px,color:#17241d
 ```
 
 ---
@@ -105,11 +91,11 @@ Toàn bộ doanh thu sẽ được quy đổi thành **20 phần quà tri ân** 
 
 ### 🛒 Gian Hàng Thương Mại Điện Tử
 
-| Danh mục | Sản phẩm | Giá |
-|----------|----------|-----|
-| 🥖 Đồ ăn vặt | Bánh tráng ngũ vị, Thạch Yogurt Jelly | 10K – 25K |
-| ☕ Đồ uống | Cafe đen BERYL, Cafe sữa, Trà tắc | 10K – 15K |
-| 🌹 Hoa tươi 20/10 | Hoa hồng, Hoa đồng tiền (1–5 bông) | 30K – 144K |
+| Danh mục               | Sản phẩm                                                                      | Giá        |
+| ----------------------- | ------------------------------------------------------------------------------- | ----------- |
+| 🥖 Đồ ăn vặt        | Bánh tráng ngũ vị, Thạch Yogurt Jelly                                      | 10K – 25K  |
+| ☕ Đồ uống           | Cafe đen BERYL, Cafe sữa, Trà tắc                                           | 10K – 15K  |
+| 🌹 Hoa tươi 20/10     | Hoa hồng, Hoa đồng tiền (1–5 bông)                                        | 30K – 144K |
 | 🎁 Combo Workshop 17/10 | Gửi lời, Một bông yêu thương, Tự tay yêu thương, Tự tay hạnh phúc | 59K – 204K |
 
 ### 🛍 Slide-over Cart Drawer
@@ -136,18 +122,18 @@ Toàn bộ doanh thu sẽ được quy đổi thành **20 phần quà tri ân** 
 
 ## 🛠 Công Nghệ Sử Dụng
 
-| Layer | Công nghệ | Vai trò |
-|-------|-----------|---------|
-| **Framework** | Next.js 14 (App Router) | SSR/SSG, API Routes, File-based routing |
-| **Language** | TypeScript 5.6 | Type safety, IntelliSense, code quality |
-| **Styling** | Tailwind CSS 3.4 + CSS Custom Properties | Design system, responsive, dark mode |
-| **Typography** | Google Fonts (Be Vietnam Pro, Lora) | Hiển thị tiếng Việt hoàn hảo |
-| **Icons** | Lucide React | Bộ icon nhẹ, tree-shakable |
-| **State** | React Context + useState | Cart management, theme toggling |
-| **Backend** | Next.js API Routes → Google Apps Script | Serverless proxy, zero infrastructure cost |
-| **Database** | Google Sheets | Free, real-time, team-accessible spreadsheet |
-| **Payment** | VietQR API | Tạo mã QR chuyển khoản tự động |
-| **Hosting** | Vercel | Auto-deploy từ GitHub, global CDN |
+| Layer                | Công nghệ                              | Vai trò                                     |
+| -------------------- | ---------------------------------------- | -------------------------------------------- |
+| **Framework**  | Next.js 14 (App Router)                  | SSR/SSG, API Routes, File-based routing      |
+| **Language**   | TypeScript 5.6                           | Type safety, IntelliSense, code quality      |
+| **Styling**    | Tailwind CSS 3.4 + CSS Custom Properties | Design system, responsive, dark mode         |
+| **Typography** | Google Fonts (Be Vietnam Pro, Lora)      | Hiển thị tiếng Việt hoàn hảo           |
+| **Icons**      | Lucide React                             | Bộ icon nhẹ, tree-shakable                 |
+| **State**      | React Context + useState                 | Cart management, theme toggling              |
+| **Backend**    | Next.js API Routes → Google Apps Script | Serverless proxy, zero infrastructure cost   |
+| **Database**   | Google Sheets                            | Free, real-time, team-accessible spreadsheet |
+| **Payment**    | VietQR API                               | Tạo mã QR chuyển khoản tự động        |
+| **Hosting**    | Vercel                                   | Auto-deploy từ GitHub, global CDN           |
 
 ---
 
@@ -226,10 +212,8 @@ GOOGLE_SHEET_WEBHOOK_URL="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
 ### 3. Thiết lập Google Sheets
 
 1. Tạo Google Sheet mới với dòng tiêu đề hàng 1:
-
    | Mã đơn | Thời gian | Họ tên | SĐT | Email | Ngày nhận | Khung giờ | Địa điểm | Địa chỉ chi tiết | Món đặt | Tạm tính | Giảm giá | Tổng thanh toán | Phương thức | Ghi chú | Trạng thái |
-   |--------|-----------|--------|-----|-------|-----------|-----------|----------|-------------------|---------|----------|----------|-----------------|-------------|---------|------------|
-
+   | --------- | ---------- | -------- | ---- | ----- | ----------- | ---------- | ------------ | -------------------- | ---------- | ---------- | ---------- | ----------------- | -------------- | -------- | ------------ |
 2. Vào **Tiện ích mở rộng** → **Apps Script**
 3. Paste nội dung từ [`scripts/google-apps-script.js`](scripts/google-apps-script.js)
 4. **Deploy** → **New deployment** → **Web app** → Execute as: Me → Access: **Anyone**
@@ -270,21 +254,6 @@ npx vercel --prod
 
 <div align="center">
 
-### Nguyễn Văn Gia Bình
-
-**Full-Stack Developer** · Sinh viên Đại học FPT TP.HCM
-
-[![GitHub](https://img.shields.io/badge/GitHub-Nguyen--Van--Gia--Binh-181717?style=for-the-badge&logo=github)](https://github.com/Nguyen-Van-Gia-Binh)
-[![Email](https://img.shields.io/badge/Email-nguyenvangiabinh22072006@gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:nguyenvangiabinh22072006@gmail.com)
-
-</div>
-
 ---
 
 <div align="center">
-
-*Dự án được xây dựng với ❤️ vì cộng đồng*
-
-**The Boys Project** · ĐH FPT TP.HCM · 2026
-
-</div>
