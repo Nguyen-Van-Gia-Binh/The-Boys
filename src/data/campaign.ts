@@ -184,7 +184,7 @@ export const PRODUCTS: Product[] = [
       description: "Tặng 2 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "1 ảnh in + 1 thiệp handmade (Tự trang trí & viết thư tri ân)",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
+    image: "/images/combo-gui-loi.jpg",
     badge: "59K",
     color: "bg-[#d8e2dc]",
   },
@@ -200,7 +200,7 @@ export const PRODUCTS: Product[] = [
       description: "Tặng 2 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "1 bông + 1 ảnh in + 1 thiệp (+5K cho mỗi bông đồng tiền)",
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&auto=format&fit=crop&q=80",
+    image: "/images/combo-mot-bong.jpg",
     badge: "Từ 89K",
     color: "bg-[#ffe5d9]",
     options: {
@@ -222,7 +222,7 @@ export const PRODUCTS: Product[] = [
       description: "Tặng 3 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "3 bông + 1 ảnh in + 1 thiệp (+5K cho mỗi bông đồng tiền)",
-    image: "https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=600&auto=format&fit=crop&q=80",
+    image: "/images/combo-3-bong.jpg",
     badge: "Từ 139K",
     color: "bg-[#ffcad4]",
     options: {
@@ -246,7 +246,7 @@ export const PRODUCTS: Product[] = [
       description: "Tặng 3 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "5 bông + 1 ảnh in + 1 thiệp (+5K cho mỗi bông đồng tiền)",
-    image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&auto=format&fit=crop&q=80",
+    image: "/images/combo-5-bong.jpg",
     badge: "Từ 179K",
     color: "bg-[#b7e4c7]",
     options: {
