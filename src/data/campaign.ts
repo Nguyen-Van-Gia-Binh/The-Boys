@@ -138,8 +138,8 @@ export const PRODUCTS: Product[] = [
     price: 79000,
     category: "flower",
     badge: "Từ 79K",
-    note: "Bó 3 bông hoa tự gói trang nhã bọc giấy mộc vintage (+5K cho mỗi bông đồng tiền)",
-    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&auto=format&fit=crop&q=80",
+    note: "Bó 3 bông hoa phối cành cỏ thlaspi xanh bọc giấy trắng Hàn Quốc thanh lịch, thắt nơ lụa trang nhã (+5K cho mỗi bông đồng tiền)",
+    image: "/images/bo-hoa-3-bong.jpg",
     color: "bg-[#f1a7a7]",
     options: {
       sizes: [
@@ -156,8 +156,8 @@ export const PRODUCTS: Product[] = [
     price: 119000,
     category: "flower",
     badge: "Từ 119K",
-    note: "Bó 5 bông hoa tự gói rực rỡ sắc màu tri ân (+5K cho mỗi bông đồng tiền)",
-    image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&auto=format&fit=crop&q=80",
+    note: "Bó 5 bông hoa phối sắc trang nhã điểm cỏ hoa đồng nội, bọc giấy trắng nhiều lớp thắt nơ lụa cao cấp (+5K cho mỗi bông đồng tiền)",
+    image: "/images/bo-hoa-5-bong.jpg",
     color: "bg-[#ea899a]",
     options: {
       sizes: [
