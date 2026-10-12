@@ -34,8 +34,8 @@ export async function POST(req: NextRequest) {
 
     const initialStatus = "Chờ chuyển khoản (VietQR)";
 
-    // Gửi sang Google Sheets Webhook nếu có cấu hình
-    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxow8CaEHHnC_o5KD3kYsM4KWXfWcr9spcp_otCyKZeGTccUFOKGOWi-xEMOhJMjtP2/exec";
+    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || DEFAULT_WEBHOOK_URL;
     let sheetSynced = false;
 
     // Định dạng thông tin nhận hàng (hỗ trợ tách bạch lịch nhận khi là đơn hỗn hợp Đồ ăn + Hoa/Combo)

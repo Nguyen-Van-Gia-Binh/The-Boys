@@ -15,29 +15,8 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
-
-    if (!webhookUrl || !webhookUrl.startsWith("http")) {
-      // Mock data nếu chưa có webhook (development)
-      return NextResponse.json({
-        success: true,
-        orders: [
-          {
-            orderId: "DH1234",
-            customerName: "Nguyễn Văn A",
-            phone: "0912345678",
-            status: "Chờ chuyển khoản (VietQR)",
-            createdAt: "13/10/2024, 10:30:00",
-            pickupDate: "17/10/2024",
-            pickupTime: "08:00 - 09:00",
-            pickupLocation: "Sảnh A - Trường ĐH FPT",
-            total: 125000,
-            paymentMethod: "Chuyển khoản VietQR"
-          }
-        ],
-        note: "⚠️ Đang chạy ở chế độ mock. Vui lòng cấu hình GOOGLE_SHEET_WEBHOOK_URL để tra cứu thực."
-      });
-    }
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxow8CaEHHnC_o5KD3kYsM4KWXfWcr9spcp_otCyKZeGTccUFOKGOWi-xEMOhJMjtP2/exec";
+    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || DEFAULT_WEBHOOK_URL;
 
     // Build query URL cho Google Apps Script
     const scriptUrl = new URL(webhookUrl);

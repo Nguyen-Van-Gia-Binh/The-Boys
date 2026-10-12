@@ -156,10 +156,10 @@ function doGet(e) {
       var cleanPhone = rawPhone.replace(/[^\d]/g, "");
 
       var match = false;
-      if (orderId && rowOrderId === orderId) match = true;
+      if (orderId && (rowOrderId === orderId || rowOrderId.indexOf(orderId) !== -1)) match = true;
       if (phone) {
         var cleanQueryPhone = phone.replace(/[^\d]/g, "");
-        if (cleanPhone === cleanQueryPhone || cleanPhone.endsWith(cleanQueryPhone)) match = true;
+        if (cleanQueryPhone && (cleanPhone === cleanQueryPhone || cleanPhone.endsWith(cleanQueryPhone) || cleanPhone.indexOf(cleanQueryPhone) !== -1)) match = true;
       }
 
       if (match) {
