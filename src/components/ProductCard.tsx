@@ -85,7 +85,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {isFlowerOrCombo && (
           <div className="mt-2.5 flex items-center gap-1.5 rounded-xl border border-rose-200/80 dark:border-rose-900/50 bg-rose-50/70 dark:bg-rose-950/30 px-2.5 py-1.5 text-[11px] font-semibold text-rose-700 dark:text-rose-300">
             <Calendar className="size-3.5 shrink-0 text-rose-500" />
-            <span>Nhận <strong>17/10</strong> tại <strong>Sảnh Gương</strong> (từ 8h sáng)</span>
+            <span>Nhận <strong>17/10</strong> tại <strong>Sảnh lầu 2</strong> (từ 8h sáng)</span>
           </div>
         )}
 
@@ -115,11 +115,10 @@ export function ProductCard({ product }: ProductCardProps) {
                     key={size.name}
                     type="button"
                     onClick={() => setSelectedSizeIdx(idx)}
-                    className={`rounded-xl py-2 px-2 text-xs font-semibold text-center transition ${
-                      selectedSizeIdx === idx
+                    className={`rounded-xl py-2 px-2 text-xs font-semibold text-center transition ${selectedSizeIdx === idx
                         ? "bg-[#315444] text-white shadow-sm ring-1 ring-[#315444]"
                         : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-text)] hover:border-[#315444]"
-                    }`}
+                      }`}
                   >
                     <span className="block truncate">{size.name}</span>
                     <span className="block text-[11px] font-bold mt-0.5 opacity-90">
@@ -154,11 +153,10 @@ export function ProductCard({ product }: ProductCardProps) {
           <button
             type="button"
             onClick={handleAdd}
-            className={`flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition active:scale-95 ${
-              isAdded
+            className={`flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition active:scale-95 ${isAdded
                 ? "bg-[#315444] text-white shadow-md"
                 : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-heading)] hover:border-[#315444] hover:bg-[#315444] hover:text-white"
-            }`}
+              }`}
           >
             {isAdded ? (
               <>

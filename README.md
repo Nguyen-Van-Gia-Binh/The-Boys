@@ -42,7 +42,7 @@ Toàn bộ lợi nhuận từ chiến dịch sẽ được quy đổi thành **2
 | **Đơn vị thực hiện** | The Boys Project — Sinh viên Đại học FPT TP.HCM |
 | **Mục tiêu gây quỹ** | Gây quỹ trao tặng 20 phần quà tri ân thương binh |
 | **Ngày mở bán đợt 1** | 13/10/2026 |
-| **Sự kiện Workshop** | 17/10/2026 (Nhận hoa tại Sảnh Gương, ĐH FPT) |
+| **Sự kiện Workshop** | 17/10/2026 (Nhận hoa tại Sảnh lầu 2, ĐH FPT) |
 | **Website chính thức** | [dongnuocvenguon.vercel.app](https://dongnuocvenguon.vercel.app) |
 | **Hotline / Zalo** | [0916 532 006](https://zalo.me/0916532006) |
 

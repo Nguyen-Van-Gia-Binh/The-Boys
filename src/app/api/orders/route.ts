@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
         body.flowerPickupTime === "custom"
           ? body.flowerCustomPickupTime || "Tự chọn"
           : body.flowerPickupTime || "08:00 - 09:00";
-      const flowerLoc = body.flowerPickupLocation || "Sảnh Gương — Nơi tổ chức Workshop (Ngày 17/10)";
+      const flowerLoc = body.flowerPickupLocation || "Sảnh lầu 2 — Nơi tổ chức Workshop (Ngày 17/10)";
       finalPickupDate = `Đồ ăn: ${body.pickupDate} | Hoa: ${body.flowerPickupDate}`;
       finalPickupTime = `Đồ ăn: ${finalPickupTime} | Hoa: ${flowerTime}`;
       finalPickupLocation = `Đồ ăn: ${body.pickupLocation} | Hoa: ${flowerLoc}`;
