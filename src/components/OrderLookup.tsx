@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, Loader2, Phone, Hash } from "lucide-react";
+import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, Loader2, Phone, Hash, Info } from "lucide-react";
 
 interface OrderResult {
   orderId: string;
@@ -12,6 +12,7 @@ interface OrderResult {
   pickupDate: string;
   pickupTime: string;
   pickupLocation: string;
+  items?: string;
   total: number;
   paymentMethod: string;
 }
@@ -58,6 +59,25 @@ export default function OrderLookup() {
     }
   };
 
+  const formatPickupDate = (dateStr: string) => {
+    if (!dateStr) return "";
+    if (dateStr.includes("Đồ ăn:") || (dateStr.includes("/") && !dateStr.includes("T"))) {
+      return dateStr;
+    }
+    try {
+      const d = new Date(dateStr);
+      if (!isNaN(d.getTime())) {
+        return d.toLocaleDateString("vi-VN", {
+          timeZone: "Asia/Ho_Chi_Minh",
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric"
+        });
+      }
+    } catch {}
+    return dateStr;
+  };
+
   const getStatusDisplay = (status: string) => {
     const lowerStatus = status.toLowerCase();
 
@@ -66,7 +86,8 @@ export default function OrderLookup() {
         icon: <CheckCircle2 className="size-5 text-emerald-600" />,
         bg: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800",
         text: "text-emerald-700 dark:text-emerald-400",
-        label: "Đã thanh toán"
+        label: "Đã thanh toán",
+        isPending: false,
       };
     }
 
@@ -75,7 +96,8 @@ export default function OrderLookup() {
         icon: <XCircle className="size-5 text-red-500" />,
         bg: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800",
         text: "text-red-700 dark:text-red-400",
-        label: "Đã hủy"
+        label: "Đã hủy",
+        isPending: false,
       };
     }
 
@@ -83,7 +105,8 @@ export default function OrderLookup() {
       icon: <Clock className="size-5 text-amber-500" />,
       bg: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800",
       text: "text-amber-700 dark:text-amber-400",
-      label: status || "Chờ xử lý"
+      label: status || "Chờ xử lý",
+      isPending: true,
     };
   };
 
@@ -214,7 +237,7 @@ export default function OrderLookup() {
                 <div className="rounded-xl bg-[var(--brand-surface)]/50 p-3 space-y-1.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-[var(--brand-muted)]">Ngày nhận:</span>
-                    <span className="font-semibold text-[var(--brand-heading)]">{order.pickupDate}</span>
+                    <span className="font-semibold text-[var(--brand-heading)]">{formatPickupDate(order.pickupDate)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--brand-muted)]">Khung giờ:</span>
@@ -222,9 +245,17 @@ export default function OrderLookup() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--brand-muted)]">Địa điểm:</span>
-                    <span className="font-semibold text-[var(--brand-heading)]">{order.pickupLocation}</span>
+                    <span className="font-semibold text-[var(--brand-heading)] text-right max-w-[65%]">{order.pickupLocation}</span>
                   </div>
                 </div>
+
+                {/* Items if available */}
+                {order.items && (
+                  <div className="text-xs text-[var(--brand-muted)] bg-[var(--brand-surface)]/40 rounded-xl p-2.5">
+                    <span className="font-semibold text-[var(--brand-heading)]">Món đã đặt: </span>
+                    <span>{order.items}</span>
+                  </div>
+                )}
 
                 {/* Payment */}
                 <div className="flex items-center justify-between pt-2 border-t border-[var(--brand-border)]/50">
@@ -235,6 +266,21 @@ export default function OrderLookup() {
                     {Number(order.total).toLocaleString("vi-VN")}đ
                   </div>
                 </div>
+
+                {/* Pending notification */}
+                {statusDisplay.isPending && (
+                  <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 p-3 text-xs text-amber-900 dark:text-amber-200">
+                    <Info className="size-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <div className="space-y-0.5 leading-relaxed">
+                      <p className="font-semibold text-amber-950 dark:text-amber-100">
+                        Thông báo thanh toán
+                      </p>
+                      <p className="opacity-90">
+                        Nếu bạn đã chuyển khoản, vui lòng chờ khoảng <strong>15–20 phút</strong> để nhóm đối soát tài khoản và cập nhật trạng thái đơn hàng nhé!
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}
