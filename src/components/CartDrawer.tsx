@@ -282,7 +282,7 @@ export default function CartDrawer() {
                         </div>
                       </div>
                       <p className="text-[11px] text-emerald-700 dark:text-emerald-400 font-medium">
-                        ⚡ Hệ thống SePay sẽ tự động đối soát nội dung <strong>THEBOYS {successOrder.id}</strong> và chuyển đơn sang trạng thái "Đã thanh toán" trên hệ thống.
+                        ⚡ Vui lòng chuyển khoản đúng nội dung <strong>THEBOYS {successOrder.id}</strong> để nhóm The Boys đối soát và xác nhận đơn hàng của bạn nhanh nhất nhé!
                       </p>
                     </div>
                   )}
@@ -679,7 +679,7 @@ export default function CartDrawer() {
                         </div>
 
                         <p className="text-[11px] text-[var(--brand-muted)] italic">
-                          💡 Vui lòng giữ đúng nội dung <strong>{transferMemo}</strong> khi chuyển khoản để SePay tự động nhận diện đơn hàng của bạn!
+                          💡 Vui lòng giữ đúng nội dung <strong>{transferMemo}</strong> khi chuyển khoản để nhóm The Boys nhận diện và xác nhận đơn của bạn nhanh nhất nhé!
                         </p>
                       </div>
                     )}
