@@ -9,11 +9,12 @@ import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
 import CustomerOrdersDrawer from "@/components/CustomerOrdersDrawer";
+import MobileBottomNav from "@/components/MobileBottomNav";
 
 export default function Home() {
   return (
     <CartProvider>
-      <div className="min-h-screen bg-[var(--brand-bg)] text-[var(--brand-text)] flex flex-col selection:bg-[#df8143] selection:text-white">
+      <div className="min-h-screen bg-[var(--brand-bg)] text-[var(--brand-text)] flex flex-col pb-16 md:pb-0 selection:bg-[#df8143] selection:text-white">
         {/* Navigation Bar */}
         <Header />
 
@@ -26,6 +27,9 @@ export default function Home() {
 
         {/* Footer */}
         <Footer />
+
+        {/* Fixed Mobile Bottom Navigation Bar */}
+        <MobileBottomNav />
 
         {/* Cart & Checkout Slide-over Drawer */}
         <CartDrawer />

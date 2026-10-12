@@ -22,22 +22,31 @@ export default function ZaloButton() {
       <style>{`
         .zalo-fab {
           position: fixed;
-          bottom: 24px;
-          left: 20px;
-          z-index: 9999;
+          bottom: 72px;
+          left: 14px;
+          z-index: 39;
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: 6px;
           background: #0068FF;
           color: #fff;
           border-radius: 999px;
-          padding: 10px 16px 10px 12px;
-          font-size: 13px;
+          padding: 8px 13px 8px 10px;
+          font-size: 12px;
           font-weight: 600;
           text-decoration: none;
           box-shadow: 0 4px 18px rgba(0,104,255,0.40);
           transition: transform 0.15s, box-shadow 0.15s;
           font-family: inherit;
+        }
+        @media (min-width: 768px) {
+          .zalo-fab {
+            bottom: 24px;
+            left: 24px;
+            padding: 10px 16px 10px 12px;
+            font-size: 13px;
+            gap: 8px;
+          }
         }
         .zalo-fab:hover {
           transform: scale(1.06);
