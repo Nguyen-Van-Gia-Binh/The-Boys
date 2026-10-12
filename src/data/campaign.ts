@@ -55,7 +55,7 @@ export const PRODUCTS: Product[] = [
     name: "Bánh tráng xì ke",
     price: 6000,
     category: "snack",
-    note: "Vị muối tỏi cay thơm nồng đậm, bánh dẻo mịn cuốn miệng (Tuấn & Hào)",
+    note: "Vị muối tỏi cay thơm nồng đậm, bánh dẻo mịn cuốn miệng",
     image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=80",
     badge: "Bán chạy nhất",
     color: "bg-[#e8c7a9]",
@@ -155,6 +155,11 @@ export const PRODUCTS: Product[] = [
     price: 69000,
     category: "combo",
     isCombo: true,
+    comboGift: {
+      name: "Bánh tráng trộn đặc biệt",
+      quantity: 2,
+      description: "Tặng 2 bịch Bánh tráng trộn khi đặt trước",
+    },
     note: "Chụp hình lưu niệm + Làm thiệp handmade (Gồm 01 ảnh in + 01 thiệp tự decor và viết thư)",
     image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
     badge: "Workshop 17/10",
@@ -166,6 +171,11 @@ export const PRODUCTS: Product[] = [
     price: 89000,
     category: "combo",
     isCombo: true,
+    comboGift: {
+      name: "Bánh tráng trộn đặc biệt",
+      quantity: 2,
+      description: "Tặng 2 bịch Bánh tráng trộn khi đặt trước",
+    },
     note: "Trọn vẹn tình cảm: Gồm 01 ảnh in + 01 thiệp handmade tự trang trí + 01 bông hoa tươi",
     image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&auto=format&fit=crop&q=80",
     badge: "Ngọt ngào",
@@ -177,6 +187,11 @@ export const PRODUCTS: Product[] = [
     price: 109000,
     category: "combo",
     isCombo: true,
+    comboGift: {
+      name: "Bánh tráng trộn đặc biệt",
+      quantity: 3,
+      description: "Tặng 3 bịch Bánh tráng trộn khi đặt trước",
+    },
     note: "Gồm 01 ảnh in + 01 file ảnh gốc + 01 bông hoa + 01 thiệp handmade + 01 bình thủy tinh trồng thủy sinh + 01 túi giấy",
     image: "https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=600&auto=format&fit=crop&q=80",
     badge: "Đặc biệt",
@@ -188,6 +203,11 @@ export const PRODUCTS: Product[] = [
     price: 169000,
     category: "combo",
     isCombo: true,
+    comboGift: {
+      name: "Bánh tráng trộn đặc biệt",
+      quantity: 3,
+      description: "Tặng 3 bịch Bánh tráng trộn khi đặt trước",
+    },
     note: "Set quà tặng cao cấp: 01 ảnh in + 02 file ảnh gốc + 01 thiệp handmade + 01 bình thủy sinh + 05 bông hoa tươi + 01 túi giấy sang trọng",
     image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&auto=format&fit=crop&q=80",
     badge: "Best Gift Choice",
@@ -199,54 +219,54 @@ export const EARLY_BIRD_VOUCHERS: EarlyBirdVoucher[] = [
   {
     minSpend: 59000,
     discountPercent: 10,
-    title: "Voucher 10% Combo Trải Nghiệm",
-    description: "Áp dụng giảm 10% khi đặt trước Combo Trải Nghiệm cho ngày 17/10",
-    applicableCategory: "combo_experience",
+    title: "Voucher 10% Đồ ăn & Đồ uống",
+    description: "Giảm 10% trực tiếp cho món ăn vặt, cafe & hoa tươi (từ 59k, không áp dụng cho Combo)",
+    applicableCategory: "individual_items",
   },
   {
     minSpend: 89000,
     discountPercent: 10,
-    title: "Voucher 10% Mọi Combo 17/10",
-    description: "Giảm 10% cho TẤT CẢ các Combo Workshop ngày 17/10",
-    applicableCategory: "all_combos",
+    title: "Voucher 10% Món lẻ",
+    description: "Giảm 10% trực tiếp cho món ăn vặt, cafe & hoa tươi (từ 89k, không áp dụng cho Combo)",
+    applicableCategory: "individual_items",
   },
   {
     minSpend: 149000,
     discountPercent: 15,
-    title: "Voucher 15% VIP Combo 17/10",
-    description: "Giảm 15% cho TẤT CẢ các Combo Workshop ngày 17/10",
-    applicableCategory: "all_combos",
+    title: "Voucher 15% VIP Món lẻ",
+    description: "Giảm 15% trực tiếp cho món ăn vặt, cafe & hoa tươi (từ 149k, không áp dụng cho Combo)",
+    applicableCategory: "individual_items",
   },
 ];
 
 /**
- * Tính toán voucher ưu đãi dựa trên giá trị giỏ hàng
+ * Tính toán voucher ưu đãi dựa trên giá trị các món lẻ hợp lệ (không tính combo)
  */
-export function calculateVoucherBenefit(subtotal: number) {
-  if (subtotal >= 149000) {
+export function calculateVoucherBenefit(eligibleSubtotal: number) {
+  if (eligibleSubtotal >= 149000) {
     return {
       current: EARLY_BIRD_VOUCHERS[2],
       next: null,
       neededForNext: 0,
     };
   }
-  if (subtotal >= 89000) {
+  if (eligibleSubtotal >= 89000) {
     return {
       current: EARLY_BIRD_VOUCHERS[1],
       next: EARLY_BIRD_VOUCHERS[2],
-      neededForNext: 149000 - subtotal,
+      neededForNext: 149000 - eligibleSubtotal,
     };
   }
-  if (subtotal >= 59000) {
+  if (eligibleSubtotal >= 59000) {
     return {
       current: EARLY_BIRD_VOUCHERS[0],
       next: EARLY_BIRD_VOUCHERS[1],
-      neededForNext: 89000 - subtotal,
+      neededForNext: 89000 - eligibleSubtotal,
     };
   }
   return {
     current: null,
     next: EARLY_BIRD_VOUCHERS[0],
-    neededForNext: 59000 - subtotal,
+    neededForNext: 59000 - eligibleSubtotal,
   };
 }

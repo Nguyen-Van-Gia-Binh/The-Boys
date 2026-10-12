@@ -18,6 +18,9 @@ interface CartContextType {
   discountAmount: number;
   total: number;
   totalQuantity: number;
+  hasCombo: boolean;
+  totalGiftBanhTrang: number;
+  giftSummary: string;
   voucherBenefit: ReturnType<typeof calculateVoucherBenefit>;
   pastOrders: OrderPayload[];
   addPastOrder: (order: OrderPayload) => void;
@@ -130,28 +133,28 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  const voucherBenefit = calculateVoucherBenefit(subtotal);
+  // Phân tích quà tặng combo và điều kiện voucher
+  const comboItems = items.filter((it) => it.product.isCombo);
+  const hasCombo = comboItems.length > 0;
+  const totalGiftBanhTrang = comboItems.reduce(
+    (sum, it) => sum + (it.product.comboGift?.quantity || 0) * it.quantity,
+    0
+  );
+  const giftSummary =
+    totalGiftBanhTrang > 0
+      ? `${totalGiftBanhTrang} bịch Bánh tráng trộn đặc biệt`
+      : "";
 
-  // Tính giảm giá nếu khách mua combo
+  // Voucher 10-15% chỉ dành cho các món khác (món lẻ), không áp dụng cho đơn hàng có combo
+  // và không áp dụng đồng thời với quà tặng bánh tráng
+  const eligibleSubtotal = hasCombo ? 0 : subtotal;
+  const voucherBenefit = calculateVoucherBenefit(eligibleSubtotal);
+
   let discountAmount = 0;
-  if (voucherBenefit.current) {
-    const comboItems = items.filter((it) => it.product.isCombo);
-    if (voucherBenefit.current.applicableCategory === "combo_experience") {
-      const expCombo = comboItems.find((c) => c.product.id === "combo-trai-nghiem");
-      if (expCombo) {
-        discountAmount = Math.round(
-          (expCombo.unitPrice * expCombo.quantity * voucherBenefit.current.discountPercent) / 100
-        );
-      }
-    } else {
-      const totalComboPrice = comboItems.reduce(
-        (sum, it) => sum + it.unitPrice * it.quantity,
-        0
-      );
-      discountAmount = Math.round(
-        (totalComboPrice * voucherBenefit.current.discountPercent) / 100
-      );
-    }
+  if (!hasCombo && voucherBenefit.current) {
+    discountAmount = Math.round(
+      (subtotal * voucherBenefit.current.discountPercent) / 100
+    );
   }
 
   const total = Math.max(0, subtotal - discountAmount);
@@ -172,6 +175,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         discountAmount,
         total,
         totalQuantity,
+        hasCombo,
+        totalGiftBanhTrang,
+        giftSummary,
         voucherBenefit,
         pastOrders,
         addPastOrder,

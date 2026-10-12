@@ -23,12 +23,14 @@ export async function POST(req: NextRequest) {
     };
 
     // Format item summary for Google Sheets
-    const itemsSummary = body.items
-      .map(
-        (it) =>
-          `${it.quantity}x ${it.productName}${it.sizeName ? ` (${it.sizeName})` : ""}: ${it.subtotal.toLocaleString("vi-VN")}đ`
-      )
-      .join("; ");
+    const itemsList = body.items.map(
+      (it) =>
+        `${it.quantity}x ${it.productName}${it.sizeName ? ` (${it.sizeName})` : ""}: ${it.subtotal.toLocaleString("vi-VN")}đ`
+    );
+    if (body.giftSummary) {
+      itemsList.push(`🎁 Quà tặng kèm: ${body.giftSummary}`);
+    }
+    const itemsSummary = itemsList.join("; ");
 
     // Gửi sang Google Sheets Webhook nếu có cấu hình
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;

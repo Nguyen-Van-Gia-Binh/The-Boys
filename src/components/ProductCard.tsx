@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Check, Sparkles } from "lucide-react";
+import { Plus, Check, Sparkles, Gift } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 
@@ -49,6 +49,14 @@ export function ProductCard({ product }: ProductCardProps) {
             Workshop 17/10
           </span>
         )}
+
+        {/* Combo pre-order gift ribbon */}
+        {product.comboGift && (
+          <div className="absolute bottom-2 inset-x-2 rounded-xl bg-gradient-to-r from-[#c44719] via-[#df8143] to-[#c44719] px-2 py-1.5 text-center text-[11px] font-extrabold text-white shadow-lg backdrop-blur-sm flex items-center justify-center gap-1.5 animate-pulse">
+            <Gift className="size-3.5 shrink-0" />
+            <span>ĐẶT TRƯỚC: TẶNG {product.comboGift.quantity} BỊCH BÁNH TRÁNG TRỘN</span>
+          </div>
+        )}
       </div>
 
       {/* Product Info */}
@@ -66,6 +74,19 @@ export function ProductCard({ product }: ProductCardProps) {
         <p className="mt-2 text-xs leading-relaxed text-[var(--brand-muted)] line-clamp-3">
           {product.note}
         </p>
+
+        {/* Combo Pre-Order Benefit Box */}
+        {product.comboGift && (
+          <div className="mt-3 rounded-2xl border border-[#df8143]/30 bg-[#df8143]/10 dark:bg-[#df8143]/15 p-2.5 text-xs text-[var(--brand-heading)]">
+            <div className="flex items-center gap-1.5 font-bold text-[#b93815] dark:text-[#f39c5b]">
+              <Gift className="size-3.5 shrink-0" />
+              <span>Đặc quyền đặt trước 17/10:</span>
+            </div>
+            <p className="mt-1 text-[11.5px] leading-relaxed text-[var(--brand-text)] font-medium">
+              Tặng kèm <strong className="font-extrabold text-[#b93815] dark:text-[#f39c5b]">+{product.comboGift.quantity} bịch Bánh tráng trộn đặc biệt</strong> (thấm vị cay thơm, ăn vặt siêu cuốn)!
+            </p>
+          </div>
+        )}
 
         {/* Size Selector if exists */}
         {hasSizes && (

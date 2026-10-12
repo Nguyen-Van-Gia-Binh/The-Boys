@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CAMPAIGN_INFO } from "@/data/campaign";
 import { OrderFormData, OrderPayload } from "@/types";
@@ -19,6 +19,9 @@ export default function CartDrawer() {
     subtotal,
     discountAmount,
     total,
+    hasCombo,
+    totalGiftBanhTrang,
+    giftSummary,
     voucherBenefit,
     pastOrders,
     addPastOrder,
@@ -78,6 +81,7 @@ export default function CartDrawer() {
         unitPrice: it.unitPrice,
         subtotal: it.unitPrice * it.quantity,
       })),
+      giftSummary: giftSummary || undefined,
       subtotal,
       discountAmount,
       voucherDescription: voucherBenefit.current?.title,
@@ -189,6 +193,12 @@ export default function CartDrawer() {
                     <p><strong>Người nhận:</strong> {successOrder.name} ({successOrder.phone})</p>
                     <p><strong>Địa điểm:</strong> {successOrder.pickupLocation}</p>
                     <p><strong>Thời gian:</strong> {successOrder.pickupDate} ({successOrder.pickupTime})</p>
+                    {successOrder.giftSummary && (
+                      <p className="rounded-xl bg-[#df8143]/15 p-2.5 font-bold text-[#b93815] dark:text-[#f39c5b] flex items-center gap-1.5">
+                        <Gift className="size-4 shrink-0 text-[#df8143]" />
+                        <span>Quà tặng kèm 17/10: {successOrder.giftSummary}</span>
+                      </p>
+                    )}
                     <p><strong>Tổng thanh toán:</strong> <span className="text-[#df8143] font-bold text-sm">{successOrder.total.toLocaleString("vi-VN")}đ</span></p>
                     <p><strong>Hình thức:</strong> {successOrder.paymentMethod === "cash" ? "Tiền mặt khi nhận" : "Chuyển khoản VietQR"}</p>
                   </div>
@@ -274,6 +284,35 @@ export default function CartDrawer() {
                     ))}
                   </div>
 
+                  {/* Quà tặng kèm Pre-order nếu có mua Combo */}
+                  {totalGiftBanhTrang > 0 && (
+                    <div className="mt-3.5 overflow-hidden rounded-2xl border border-dashed border-[#df8143] bg-gradient-to-r from-[#df8143]/15 via-[#df8143]/10 to-[#df8143]/5 p-3.5 shadow-sm">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <span className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#df8143] to-[#b93815] text-white shadow-md shadow-[#df8143]/20 shrink-0">
+                            <Gift className="size-5" />
+                          </span>
+                          <div>
+                            <span className="inline-block rounded-md bg-[#df8143]/25 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-[#b93815] dark:text-[#f39c5b]">
+                              Quà tặng Pre-order 17/10
+                            </span>
+                            <p className="mt-0.5 text-xs font-bold text-[var(--brand-heading)]">
+                              +{totalGiftBanhTrang} Bịch Bánh Tráng Trộn Đặc Biệt
+                            </p>
+                            <p className="text-[11px] text-[var(--brand-muted)]">
+                              Tặng kèm theo các Combo đặt trước ngày 17/10
+                            </p>
+                          </div>
+                        </div>
+                        <div className="shrink-0 text-right">
+                          <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
+                            0đ (Miễn phí)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Tạm tính & Voucher Section */}
                   <div className="mt-4 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 space-y-2">
                     <div className="flex items-center justify-between text-sm">
@@ -283,11 +322,23 @@ export default function CartDrawer() {
                       </span>
                     </div>
 
+                    {/* Dòng quà tặng */}
+                    {totalGiftBanhTrang > 0 && (
+                      <div className="flex items-center justify-between text-xs text-[#b93815] dark:text-[#f39c5b] font-semibold pt-1 border-t border-[var(--brand-border)]">
+                        <span className="flex items-center gap-1">
+                          <Gift className="size-3.5 text-[#df8143]" />
+                          Quà tặng Pre-order Combo:
+                        </span>
+                        <span>+{totalGiftBanhTrang} bịch Bánh tráng trộn (0đ)</span>
+                      </div>
+                    )}
+
+                    {/* Dòng giảm giá món lẻ */}
                     {discountAmount > 0 && (
                       <div className="flex items-center justify-between text-xs text-[#315444] font-semibold pt-1 border-t border-[var(--brand-border)]">
                         <span className="flex items-center gap-1">
                           <Sparkles className="size-3.5 text-[#e6b057]" />
-                          Ưu đãi ({voucherBenefit.current?.title}):
+                          Ưu đãi món lẻ ({voucherBenefit.current?.title}):
                         </span>
                         <span>-{discountAmount.toLocaleString("vi-VN")}đ</span>
                       </div>
@@ -300,12 +351,16 @@ export default function CartDrawer() {
                       </span>
                     </div>
 
-                    {/* Voucher tip */}
-                    {voucherBenefit.next && (
+                    {/* Voucher / Promo Tips */}
+                    {hasCombo ? (
                       <p className="text-[11px] text-[var(--brand-muted)] pt-1">
-                        💡 Mua thêm <strong>{voucherBenefit.neededForNext.toLocaleString("vi-VN")}đ</strong> để nhận <strong>{voucherBenefit.next.title}</strong>!
+                        🎁 Đơn có Combo nhận <strong>{totalGiftBanhTrang} bịch bánh tráng trộn</strong> (ưu đãi voucher % không áp dụng đồng thời với combo có quà tặng).
                       </p>
-                    )}
+                    ) : voucherBenefit.next ? (
+                      <p className="text-[11px] text-[var(--brand-muted)] pt-1">
+                        💡 Mua thêm <strong>{voucherBenefit.neededForNext.toLocaleString("vi-VN")}đ</strong> món lẻ để nhận <strong>{voucherBenefit.next.title}</strong>!
+                      </p>
+                    ) : null}
                   </div>
 
                   {/* FORM THÔNG TIN NHẬN HÀNG */}
@@ -566,6 +621,12 @@ export default function CartDrawer() {
                           </div>
                         ))}
                       </div>
+                      {ord.giftSummary && (
+                        <div className="rounded-lg bg-[#df8143]/15 px-2.5 py-1 text-[11px] font-bold text-[#b93815] dark:text-[#f39c5b] flex items-center gap-1.5">
+                          <Gift className="size-3.5 shrink-0 text-[#df8143]" />
+                          <span>Quà tặng kèm: {ord.giftSummary}</span>
+                        </div>
+                      )}
                       <div className="border-t border-[var(--brand-border)] pt-2 flex justify-between font-bold text-sm">
                         <span>Tổng tiền:</span>
                         <span className="text-[#df8143]">{ord.total.toLocaleString("vi-VN")}đ</span>

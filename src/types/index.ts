@@ -1,5 +1,11 @@
 export type ProductCategory = "all" | "snack" | "drink" | "flower" | "combo";
 
+export interface ComboGift {
+  name: string;
+  quantity: number;
+  description?: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -10,6 +16,7 @@ export interface Product {
   badge?: string;
   color?: string;
   isCombo?: boolean;
+  comboGift?: ComboGift;
   options?: {
     sizes?: { name: string; price: number }[];
   };
@@ -27,7 +34,7 @@ export interface EarlyBirdVoucher {
   discountPercent: number;
   title: string;
   description: string;
-  applicableCategory: "combo_experience" | "all_combos";
+  applicableCategory?: "individual_items" | "all_combos" | "combo_experience";
 }
 
 export interface OrderFormData {
@@ -53,6 +60,7 @@ export interface OrderPayload extends OrderFormData {
     unitPrice: number;
     subtotal: number;
   }[];
+  giftSummary?: string;
   subtotal: number;
   discountAmount: number;
   voucherDescription?: string;
