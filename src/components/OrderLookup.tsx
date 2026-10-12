@@ -45,6 +45,10 @@ export default function OrderLookup() {
       params.set("_t", Date.now().toString());
       const res = await fetch(`/api/orders/lookup?${params.toString()}`, {
         cache: "no-store",
+        headers: {
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          Pragma: "no-cache",
+        },
       });
       const data = await res.json();
 
