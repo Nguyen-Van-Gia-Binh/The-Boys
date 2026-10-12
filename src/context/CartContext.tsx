@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { CheckCircle2, ArrowRight, X } from "lucide-react";
 import { CartItem, Product, OrderPayload } from "@/types";
 import { calculateVoucherBenefit } from "@/data/campaign";
 
@@ -33,6 +34,20 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"cart" | "orders">("cart");
   const [pastOrders, setPastOrders] = useState<OrderPayload[]>([]);
+  const [toast, setToast] = useState<{
+    id: number;
+    title: string;
+    description: string;
+  } | null>(null);
+
+  // Auto-dismiss toast sau 2.8 giây
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 2800);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // Load cart and orders from localStorage
   useEffect(() => {
@@ -86,8 +101,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       ];
     });
 
-    setIsCartOpen(true);
-    setActiveTab("cart");
+    // Thông báo nhẹ nhàng tinh tế thay vì tự động nhảy mở giỏ hàng
+    const sizeNote = selectedSize ? ` (${selectedSize.name})` : "";
+    setToast({
+      id: Date.now(),
+      title: "Đã thêm vào giỏ hàng!",
+      description: `${product.name}${sizeNote}`,
+    });
   };
 
   const updateQuantity = (index: number, delta: number) => {
@@ -174,6 +194,42 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {children}
+
+      {/* Thông báo nhẹ nhàng khi thêm món vào giỏ hàng */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface)]/95 px-4 py-3 shadow-2xl backdrop-blur-md transition-all animate-in fade-in slide-in-from-bottom-3 duration-300 max-w-sm sm:max-w-md ring-1 ring-black/5"
+        >
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+            <CheckCircle2 className="size-5" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-[var(--brand-heading)]">{toast.title}</p>
+            <p className="text-[11px] text-[var(--brand-muted)] truncate">{toast.description}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setIsCartOpen(true);
+              setToast(null);
+            }}
+            className="flex items-center gap-1 rounded-xl bg-[#315444] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm hover:bg-[#243e33] transition shrink-0 active:scale-95"
+          >
+            <span>Xem giỏ</span>
+            <ArrowRight className="size-3" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="p-1 rounded-lg text-[var(--brand-muted)] hover:bg-[var(--brand-surface-alt)] transition shrink-0"
+            aria-label="Đóng thông báo"
+          >
+            <X className="size-3.5" />
+          </button>
+        </div>
+      )}
     </CartContext.Provider>
   );
 }
