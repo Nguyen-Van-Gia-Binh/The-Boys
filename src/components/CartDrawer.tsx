@@ -37,7 +37,7 @@ export default function CartDrawer() {
     pickupLocation: CAMPAIGN_INFO.pickupLocations[0],
     pickupTime: CAMPAIGN_INFO.pickupTimeSlots[0],
     customPickupTime: "",
-    paymentMethod: "cash",
+    paymentMethod: "bank_transfer",
   });
 
   const [orderCode, setOrderCode] = useState(() => `DH${Math.floor(1000 + Math.random() * 9000)}`);
@@ -95,8 +95,7 @@ export default function CartDrawer() {
       })),
       giftSummary: giftSummary || undefined,
       subtotal,
-      discountAmount,
-      voucherDescription: voucherBenefit.current?.title,
+      discountAmount: 0,
       total,
       createdAt: new Date().toISOString(),
     };
@@ -215,13 +214,11 @@ export default function CartDrawer() {
                         <span>Quà tặng kèm 17/10: {successOrder.giftSummary}</span>
                       </p>
                     )}
-                    <p><strong>Tổng thanh toán:</strong> <span className="text-[#df8143] font-bold text-sm">{successOrder.total.toLocaleString("vi-VN")}đ</span></p>
-                    <p><strong>Hình thức:</strong> {successOrder.paymentMethod === "cash" ? "Tiền mặt khi nhận" : "Chuyển khoản VietQR"}</p>
+                    <p><strong>Hình thức:</strong> Chuyển khoản VietQR</p>
                   </div>
 
-                  {/* Hướng dẫn chuyển khoản VietQR nếu chọn bank_transfer */}
-                  {successOrder.paymentMethod === "bank_transfer" && (
-                    <div className="mt-4 rounded-2xl border-2 border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 text-center space-y-3 w-full">
+                  {/* Hướng dẫn chuyển khoản VietQR */}
+                  <div className="mt-4 rounded-2xl border-2 border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20 p-4 text-center space-y-3 w-full">
                       <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-emerald-800 dark:text-emerald-300">
                         <QrCode className="size-4 text-emerald-600" />
                         <span>Quét mã VietQR để thanh toán</span>
@@ -285,7 +282,6 @@ export default function CartDrawer() {
                         ⚡ Vui lòng chuyển khoản đúng nội dung <strong>THEBOYS {successOrder.id}</strong> để nhóm The Boys đối soát và xác nhận đơn hàng của bạn nhanh nhất nhé!
                       </p>
                     </div>
-                  )}
 
                   <p className="mt-4 text-xs text-[var(--brand-muted)]">
                     Cảm ơn bạn đã đồng hành cùng chiến dịch Dòng Nước Về Nguồn của nhóm The Boys!
@@ -382,7 +378,7 @@ export default function CartDrawer() {
                               Quà tặng Pre-order 17/10
                             </span>
                             <p className="mt-0.5 text-xs font-bold text-[var(--brand-heading)]">
-                              +{totalGiftBanhTrang} Bịch Bánh Tráng Trộn Đặc Biệt
+                              +{totalGiftBanhTrang} Bịch Bánh Tráng Ngũ Vị
                             </p>
                             <p className="text-[11px] text-[var(--brand-muted)]">
                               Tặng kèm theo các Combo đặt trước ngày 17/10
@@ -414,18 +410,7 @@ export default function CartDrawer() {
                           <Gift className="size-3.5 text-[#df8143]" />
                           Quà tặng Pre-order Combo:
                         </span>
-                        <span>+{totalGiftBanhTrang} bịch Bánh tráng trộn (0đ)</span>
-                      </div>
-                    )}
-
-                    {/* Dòng giảm giá món lẻ */}
-                    {discountAmount > 0 && (
-                      <div className="flex items-center justify-between text-xs text-[#315444] font-semibold pt-1 border-t border-[var(--brand-border)]">
-                        <span className="flex items-center gap-1">
-                          <Sparkles className="size-3.5 text-[#e6b057]" />
-                          Ưu đãi món lẻ ({voucherBenefit.current?.title}):
-                        </span>
-                        <span>-{discountAmount.toLocaleString("vi-VN")}đ</span>
+                        <span>+{totalGiftBanhTrang} bịch Bánh tráng ngũ vị (0đ)</span>
                       </div>
                     )}
 
@@ -435,17 +420,6 @@ export default function CartDrawer() {
                         {total.toLocaleString("vi-VN")}đ
                       </span>
                     </div>
-
-                    {/* Voucher / Promo Tips */}
-                    {hasCombo ? (
-                      <p className="text-[11px] text-[var(--brand-muted)] pt-1">
-                        🎁 Đơn có Combo nhận <strong>{totalGiftBanhTrang} bịch bánh tráng trộn</strong> (ưu đãi voucher % không áp dụng đồng thời với combo có quà tặng).
-                      </p>
-                    ) : voucherBenefit.next ? (
-                      <p className="text-[11px] text-[var(--brand-muted)] pt-1">
-                        💡 Mua thêm <strong>{voucherBenefit.neededForNext.toLocaleString("vi-VN")}đ</strong> món lẻ để nhận <strong>{voucherBenefit.next.title}</strong>!
-                      </p>
-                    ) : null}
                   </div>
 
                   {/* FORM THÔNG TIN NHẬN HÀNG */}
@@ -585,39 +559,24 @@ export default function CartDrawer() {
                       />
                     )}
 
-                    {/* Phương thức thanh toán */}
-                    <fieldset className="pt-2 space-y-2">
-                      <legend className="text-xs font-semibold text-[var(--brand-heading)]">
-                        Phương thức thanh toán <span className="text-red-500">*</span>
-                      </legend>
-                      <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-[var(--brand-heading)] p-2.5 rounded-xl border border-[var(--brand-border)] hover:bg-[var(--brand-surface-alt)] transition">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="cash"
-                          checked={formData.paymentMethod === "cash"}
-                          onChange={() => setFormData((p) => ({ ...p, paymentMethod: "cash" }))}
-                          className="size-4 text-[#315444] focus:ring-[#315444]"
-                        />
-                        <span>Tiền mặt khi nhận hàng</span>
-                      </label>
+                    {/* Phương thức thanh toán duy nhất: Chuyển khoản VietQR */}
+                    <div className="pt-2 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-[var(--brand-heading)]">
+                          Phương thức thanh toán <span className="text-red-500">*</span>
+                        </span>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
+                          Chuyển khoản VietQR
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/20 p-2.5 text-xs text-emerald-800 dark:text-emerald-300">
+                        <QrCode className="size-4 shrink-0 text-emerald-600" />
+                        <span>Nhóm tiếp nhận thanh toán trước qua chuyển khoản ngân hàng (VietQR).</span>
+                      </div>
+                    </div>
 
-                      <label className="flex cursor-pointer items-center gap-2.5 text-sm font-medium text-[var(--brand-heading)] p-2.5 rounded-xl border border-[var(--brand-border)] hover:bg-[var(--brand-surface-alt)] transition">
-                        <input
-                          type="radio"
-                          name="paymentMethod"
-                          value="bank_transfer"
-                          checked={formData.paymentMethod === "bank_transfer"}
-                          onChange={() => setFormData((p) => ({ ...p, paymentMethod: "bank_transfer" }))}
-                          className="size-4 text-[#315444] focus:ring-[#315444]"
-                        />
-                        <span>Chuyển khoản ngân hàng (VietQR)</span>
-                      </label>
-                    </fieldset>
-
-                    {/* QR Code Chuyển khoản nếu chọn bank_transfer */}
-                    {formData.paymentMethod === "bank_transfer" && (
-                      <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center space-y-3">
+                    {/* QR Code Chuyển khoản VietQR */}
+                    <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center space-y-3">
                         <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#315444]">
                           <QrCode className="size-4 text-[#df8143]" />
                           <span>Mã QR thanh toán VietQR (Tự động nhận diện)</span>
@@ -682,7 +641,6 @@ export default function CartDrawer() {
                           💡 Vui lòng giữ đúng nội dung <strong>{transferMemo}</strong> khi chuyển khoản để nhóm The Boys nhận diện và xác nhận đơn của bạn nhanh nhất nhé!
                         </p>
                       </div>
-                    )}
 
                     {/* Error message if any */}
                     {errorMessage && (

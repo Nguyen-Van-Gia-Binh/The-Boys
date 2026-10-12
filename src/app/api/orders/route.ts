@@ -32,10 +32,7 @@ export async function POST(req: NextRequest) {
     }
     const itemsSummary = itemsList.join("; ");
 
-    const initialStatus =
-      body.paymentMethod === "cash"
-        ? "Chờ xác nhận (Tiền mặt)"
-        : "Chờ chuyển khoản (VietQR)";
+    const initialStatus = "Chờ chuyển khoản (VietQR)";
 
     // Gửi sang Google Sheets Webhook nếu có cấu hình
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
@@ -57,7 +54,7 @@ export async function POST(req: NextRequest) {
           subtotal: body.subtotal,
           discount: body.discountAmount || 0,
           total: body.total,
-          paymentMethod: body.paymentMethod === "cash" ? "Tiền mặt khi nhận" : "Chuyển khoản VietQR",
+          paymentMethod: "Chuyển khoản VietQR",
           note: body.note || "",
           status: initialStatus,
         };

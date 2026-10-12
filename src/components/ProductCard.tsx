@@ -54,7 +54,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {product.comboGift && (
           <div className="absolute bottom-2 inset-x-2 rounded-xl bg-gradient-to-r from-[#c44719] via-[#df8143] to-[#c44719] px-2 py-1.5 text-center text-[11px] font-extrabold text-white shadow-lg backdrop-blur-sm flex items-center justify-center gap-1.5 animate-pulse">
             <Gift className="size-3.5 shrink-0" />
-            <span>ĐẶT TRƯỚC: TẶNG {product.comboGift.quantity} BỊCH BÁNH TRÁNG TRỘN</span>
+            <span>ĐẶT TRƯỚC: TẶNG {product.comboGift.quantity} BỊCH BÁNH TRÁNG NGŨ VỊ</span>
           </div>
         )}
       </div>
@@ -83,22 +83,22 @@ export function ProductCard({ product }: ProductCardProps) {
               <span>Đặc quyền đặt trước 17/10:</span>
             </div>
             <p className="mt-1 text-[11.5px] leading-relaxed text-[var(--brand-text)] font-medium">
-              Tặng kèm <strong className="font-extrabold text-[#b93815] dark:text-[#f39c5b]">+{product.comboGift.quantity} bịch Bánh tráng trộn đặc biệt</strong> (thấm vị cay thơm, ăn vặt siêu cuốn)!
+              Tặng kèm <strong className="font-extrabold text-[#b93815] dark:text-[#f39c5b]">+{product.comboGift.quantity} bịch Bánh tráng ngũ vị</strong> (thơm lừng đậm đà, ăn vặt siêu cuốn)!
             </p>
           </div>
         )}
 
-        {/* Size Selector if exists */}
+        {/* Size / Option Selector if exists */}
         {hasSizes && (
-          <div className="mt-3 flex items-center gap-2">
-            <span className="text-[11px] font-semibold text-[var(--brand-muted)]">Chọn size:</span>
-            <div className="flex gap-1.5">
+          <div className="mt-3 space-y-1.5">
+            <span className="text-[11px] font-semibold text-[var(--brand-muted)]">Chọn loại / biến thể:</span>
+            <div className="flex flex-wrap gap-1.5">
               {product.options!.sizes!.map((size, idx) => (
                 <button
                   key={size.name}
                   type="button"
                   onClick={() => setSelectedSizeIdx(idx)}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-semibold transition ${
+                  className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${
                     selectedSizeIdx === idx
                       ? "bg-[#315444] text-white shadow-sm"
                       : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-text)] hover:border-[#315444]"

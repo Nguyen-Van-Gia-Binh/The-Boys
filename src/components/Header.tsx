@@ -50,10 +50,7 @@ export default function Header() {
             Về dự án
           </a>
           <a href="#shop" className="transition hover:text-[#df8143]">
-            Gian hàng
-          </a>
-          <a href="#vouchers" className="transition hover:text-[#df8143]">
-            Ưu đãi 13/10
+            Gian hàng sẻ chia
           </a>
           <a href="#journey" className="transition hover:text-[#df8143]">
             Hành trình tri ân
@@ -117,13 +114,6 @@ export default function Header() {
             className="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--brand-text)] hover:bg-[var(--brand-surface-alt)]"
           >
             Gian hàng sẻ chia
-          </a>
-          <a
-            href="#vouchers"
-            onClick={() => setMobileMenuOpen(false)}
-            className="block rounded-lg px-3 py-2 text-sm font-medium text-[var(--brand-text)] hover:bg-[var(--brand-surface-alt)]"
-          >
-            Ưu đãi đặt sớm
           </a>
           <a
             href="#journey"

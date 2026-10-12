@@ -52,33 +52,24 @@ export const CAMPAIGN_INFO = {
 export const PRODUCTS: Product[] = [
   // --- ĐỒ ĂN VẶT ---
   {
-    id: "snack-xike",
-    name: "Bánh tráng xì ke",
-    price: 6000,
+    id: "snack-ngu-vi",
+    name: "Bánh tráng ngũ vị",
+    price: 10000,
     category: "snack",
-    note: "Vị muối tỏi cay thơm nồng đậm, bánh dẻo mịn cuốn miệng",
-    image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=600&auto=format&fit=crop&q=80",
-    badge: "Bán chạy nhất",
+    note: "Bánh tráng ngũ vị thơm lừng đậm đà, kết hợp hoàn hảo các tầng vị cay mặn ngọt bùi cuốn hút",
+    image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600&auto=format&fit=crop&q=80",
+    badge: "Món mới 10k",
     color: "bg-[#e8c7a9]",
   },
   {
-    id: "snack-tron",
-    name: "Bánh tráng trộn đặc biệt",
-    price: 8000,
+    id: "snack-thach-trai-cay",
+    name: "Thạch trái cây",
+    price: 25000,
     category: "snack",
-    note: "Bánh tráng trộn thấm vị, topping khô bò, rau răm, tắc chua thanh ngọt",
-    image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?w=600&auto=format&fit=crop&q=80",
-    color: "bg-[#d7b6a4]",
-  },
-  {
-    id: "snack-sate-tom",
-    name: "Bánh tráng giòn sa tế tôm",
-    price: 12000,
-    category: "snack",
-    note: "Bánh tráng giòn rụm phủ sốt sa tế tôm cay the béo ngậy thơm nức mũi",
-    image: "https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=600&auto=format&fit=crop&q=80",
-    badge: "Siêu giòn",
-    color: "bg-[#f2d985]",
+    note: "Thạch trái cây tươi mát giòn ngọt sảng khoái, ngập tràn hương vị thanh mát giải nhiệt",
+    image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=600&auto=format&fit=crop&q=80",
+    badge: "Món mới 25k",
+    color: "bg-[#fce7f3]",
   },
 
   // --- ĐỒ UỐNG ---
@@ -118,35 +109,64 @@ export const PRODUCTS: Product[] = [
     color: "bg-[#f5e08c]",
   },
 
-  // --- HOA TƯƠI 20/10 ---
+  // --- HOA TỰ GÓI 20/10 ---
   {
-    id: "flower-1",
-    name: "01 Bông hoa tươi tuyển chọn",
-    price: 19000,
+    id: "flower-hong-1",
+    name: "1 Hoa hồng",
+    price: 30000,
     category: "flower",
-    note: "Hoa tươi thắt nơ tinh tế, thích hợp gửi trao lời chúc nhỏ xinh nhân dịp 20/10",
-    image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&auto=format&fit=crop&q=80",
+    note: "01 Bông hoa hồng tự gói tuyển chọn, thắt nơ xinh xắn trao gửi lời yêu thương",
+    image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80",
+    badge: "Hoa tự gói 30k",
     color: "bg-[#f4c2c2]",
   },
   {
-    id: "flower-3",
-    name: "03 Bông hoa tình cảm",
-    price: 49000,
+    id: "flower-dong-tien-1",
+    name: "1 Hoa đồng tiền",
+    price: 35000,
     category: "flower",
-    note: "Bó 3 bông hoa trang nhã bọc giấy mộc phong cách vintage",
-    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&auto=format&fit=crop&q=80",
-    badge: "Tiết kiệm 8k",
-    color: "bg-[#f1a7a7]",
+    note: "01 Bông hoa đồng tiền tươi tắn rực rỡ, mang ý nghĩa may mắn và khởi sắc",
+    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=600&auto=format&fit=crop&q=80",
+    badge: "Hoa tự gói 35k",
+    color: "bg-[#ffe5d9]",
   },
   {
-    id: "flower-5",
-    name: "05 Bông hoa rực rỡ",
+    id: "flower-bo-3",
+    name: "Bó 3 bông",
     price: 79000,
     category: "flower",
-    note: "Bó hoa 5 bông tươi thắm biểu trưng cho sự trân trọng và biết ơn sâu sắc",
-    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?w=600&auto=format&fit=crop&q=80",
-    badge: "Yêu thích nhất",
+    badge: "Từ 79K",
+    note: "Bó 3 bông hoa tự gói trang nhã bọc giấy mộc vintage (+5K cho mỗi bông đồng tiền)",
+    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=600&auto=format&fit=crop&q=80",
+    color: "bg-[#f1a7a7]",
+    options: {
+      sizes: [
+        { name: "3 Hoa hồng", price: 79000 },
+        { name: "2 Hồng + 1 Đồng tiền (+5k)", price: 84000 },
+        { name: "1 Hồng + 2 Đồng tiền (+10k)", price: 89000 },
+        { name: "3 Hoa đồng tiền (+15k)", price: 94000 },
+      ],
+    },
+  },
+  {
+    id: "flower-bo-5",
+    name: "Bó 5 bông",
+    price: 119000,
+    category: "flower",
+    badge: "Từ 119K",
+    note: "Bó 5 bông hoa tự gói rực rỡ sắc màu tri ân (+5K cho mỗi bông đồng tiền)",
+    image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=600&auto=format&fit=crop&q=80",
     color: "bg-[#ea899a]",
+    options: {
+      sizes: [
+        { name: "5 Hoa hồng", price: 119000 },
+        { name: "4 Hồng + 1 Đồng tiền (+5k)", price: 124000 },
+        { name: "3 Hồng + 2 Đồng tiền (+10k)", price: 129000 },
+        { name: "2 Hồng + 3 Đồng tiền (+15k)", price: 134000 },
+        { name: "1 Hồng + 4 Đồng tiền (+20k)", price: 139000 },
+        { name: "5 Hoa đồng tiền (+25k)", price: 144000 },
+      ],
+    },
   },
 
   // --- COMBO WORKSHOP 17/10 ---
@@ -157,9 +177,9 @@ export const PRODUCTS: Product[] = [
     category: "combo",
     isCombo: true,
     comboGift: {
-      name: "Bánh tráng trộn đặc biệt",
+      name: "Bánh tráng ngũ vị",
       quantity: 2,
-      description: "Tặng 2 bịch Bánh tráng trộn khi đặt trước",
+      description: "Tặng 2 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "Chụp hình lưu niệm + Làm thiệp handmade (Gồm 01 ảnh in + 01 thiệp tự decor và viết thư)",
     image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
@@ -173,9 +193,9 @@ export const PRODUCTS: Product[] = [
     category: "combo",
     isCombo: true,
     comboGift: {
-      name: "Bánh tráng trộn đặc biệt",
+      name: "Bánh tráng ngũ vị",
       quantity: 2,
-      description: "Tặng 2 bịch Bánh tráng trộn khi đặt trước",
+      description: "Tặng 2 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "Trọn vẹn tình cảm: Gồm 01 ảnh in + 01 thiệp handmade tự trang trí + 01 bông hoa tươi",
     image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=600&auto=format&fit=crop&q=80",
@@ -189,9 +209,9 @@ export const PRODUCTS: Product[] = [
     category: "combo",
     isCombo: true,
     comboGift: {
-      name: "Bánh tráng trộn đặc biệt",
+      name: "Bánh tráng ngũ vị",
       quantity: 3,
-      description: "Tặng 3 bịch Bánh tráng trộn khi đặt trước",
+      description: "Tặng 3 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "Gồm 01 ảnh in + 01 file ảnh gốc + 01 bông hoa + 01 thiệp handmade + 01 bình thủy tinh trồng thủy sinh + 01 túi giấy",
     image: "https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?w=600&auto=format&fit=crop&q=80",
@@ -205,9 +225,9 @@ export const PRODUCTS: Product[] = [
     category: "combo",
     isCombo: true,
     comboGift: {
-      name: "Bánh tráng trộn đặc biệt",
+      name: "Bánh tráng ngũ vị",
       quantity: 3,
-      description: "Tặng 3 bịch Bánh tráng trộn khi đặt trước",
+      description: "Tặng 3 bịch Bánh tráng ngũ vị khi đặt trước",
     },
     note: "Set quà tặng cao cấp: 01 ảnh in + 02 file ảnh gốc + 01 thiệp handmade + 01 bình thủy sinh + 05 bông hoa tươi + 01 túi giấy sang trọng",
     image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&auto=format&fit=crop&q=80",
@@ -216,58 +236,15 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
-export const EARLY_BIRD_VOUCHERS: EarlyBirdVoucher[] = [
-  {
-    minSpend: 59000,
-    discountPercent: 10,
-    title: "Voucher 10% Đồ ăn & Đồ uống",
-    description: "Giảm 10% trực tiếp cho món ăn vặt, cafe & hoa tươi (từ 59k, không áp dụng cho Combo)",
-    applicableCategory: "individual_items",
-  },
-  {
-    minSpend: 89000,
-    discountPercent: 10,
-    title: "Voucher 10% Món lẻ",
-    description: "Giảm 10% trực tiếp cho món ăn vặt, cafe & hoa tươi (từ 89k, không áp dụng cho Combo)",
-    applicableCategory: "individual_items",
-  },
-  {
-    minSpend: 149000,
-    discountPercent: 15,
-    title: "Voucher 15% VIP Món lẻ",
-    description: "Giảm 15% trực tiếp cho món ăn vặt, cafe & hoa tươi (từ 149k, không áp dụng cho Combo)",
-    applicableCategory: "individual_items",
-  },
-];
+export const EARLY_BIRD_VOUCHERS: EarlyBirdVoucher[] = [];
 
 /**
- * Tính toán voucher ưu đãi dựa trên giá trị các món lẻ hợp lệ (không tính combo)
+ * Đã bỏ các loại voucher theo yêu cầu của team
  */
-export function calculateVoucherBenefit(eligibleSubtotal: number) {
-  if (eligibleSubtotal >= 149000) {
-    return {
-      current: EARLY_BIRD_VOUCHERS[2],
-      next: null,
-      neededForNext: 0,
-    };
-  }
-  if (eligibleSubtotal >= 89000) {
-    return {
-      current: EARLY_BIRD_VOUCHERS[1],
-      next: EARLY_BIRD_VOUCHERS[2],
-      neededForNext: 149000 - eligibleSubtotal,
-    };
-  }
-  if (eligibleSubtotal >= 59000) {
-    return {
-      current: EARLY_BIRD_VOUCHERS[0],
-      next: EARLY_BIRD_VOUCHERS[1],
-      neededForNext: 89000 - eligibleSubtotal,
-    };
-  }
+export function calculateVoucherBenefit(_subtotal: number) {
   return {
     current: null,
-    next: EARLY_BIRD_VOUCHERS[0],
-    neededForNext: 59000 - eligibleSubtotal,
+    next: null,
+    neededForNext: 0,
   };
 }

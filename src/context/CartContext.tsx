@@ -133,7 +133,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
 
-  // Phân tích quà tặng combo và điều kiện voucher
+  // Phân tích quà tặng combo
   const comboItems = items.filter((it) => it.product.isCombo);
   const hasCombo = comboItems.length > 0;
   const totalGiftBanhTrang = comboItems.reduce(
@@ -142,22 +142,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
   const giftSummary =
     totalGiftBanhTrang > 0
-      ? `${totalGiftBanhTrang} bịch Bánh tráng trộn đặc biệt`
+      ? `${totalGiftBanhTrang} bịch Bánh tráng ngũ vị`
       : "";
 
-  // Voucher 10-15% chỉ dành cho các món khác (món lẻ), không áp dụng cho đơn hàng có combo
-  // và không áp dụng đồng thời với quà tặng bánh tráng
-  const eligibleSubtotal = hasCombo ? 0 : subtotal;
-  const voucherBenefit = calculateVoucherBenefit(eligibleSubtotal);
-
-  let discountAmount = 0;
-  if (!hasCombo && voucherBenefit.current) {
-    discountAmount = Math.round(
-      (subtotal * voucherBenefit.current.discountPercent) / 100
-    );
-  }
-
-  const total = Math.max(0, subtotal - discountAmount);
+  const voucherBenefit = calculateVoucherBenefit(subtotal);
+  const discountAmount = 0;
+  const total = subtotal;
 
   return (
     <CartContext.Provider

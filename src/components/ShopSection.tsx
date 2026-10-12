@@ -11,9 +11,9 @@ export default function ShopSection() {
 
   const categories = [
     { id: "all", label: "Tất cả món", icon: Sparkles },
-    { id: "snack", label: "Bánh tráng ăn vặt", icon: UtensilsCrossed },
+    { id: "snack", label: "Ăn vặt & Bánh tráng", icon: UtensilsCrossed },
     { id: "drink", label: "Đồ uống & Cafe", icon: Coffee },
-    { id: "flower", label: "Hoa tươi 20/10", icon: Flower2 },
+    { id: "flower", label: "Hoa tươi tự gói", icon: Flower2 },
     { id: "combo", label: "Combo Workshop 17/10", icon: Gift },
   ];
 
@@ -92,11 +92,11 @@ export default function ShopSection() {
                   <span className="text-xs text-[var(--brand-muted)] font-medium">Số lượng quà có hạn</span>
                 </div>
                 <h3 className="mt-1 text-base sm:text-lg font-bold text-[var(--brand-heading)]">
-                  Đặt trước Combo — Tặng ngay đến <span className="text-[#df8143]">3 Bịch Bánh Tráng Trộn</span>!
+                  Đặt trước Combo — Tặng ngay đến <span className="text-[#df8143]">3 Bịch Bánh Tráng Ngũ Vị</span>!
                 </h3>
                 <p className="mt-1 text-xs sm:text-sm text-[var(--brand-muted)] leading-relaxed">
-                  • <strong>Combo 1 &amp; 2:</strong> Tặng kèm <strong>2 bịch bánh tráng trộn</strong> đặc biệt (trị giá 16k).<br className="hidden sm:inline" />
-                  {" "}• <strong>Combo 3 &amp; 4:</strong> Tặng kèm <strong>3 bịch bánh tráng trộn</strong> đặc biệt (trị giá 24k).
+                  • <strong>Combo 1 &amp; 2:</strong> Tặng kèm <strong>2 bịch bánh tráng ngũ vị</strong> thơm ngon.<br className="hidden sm:inline" />
+                  {" "}• <strong>Combo 3 &amp; 4:</strong> Tặng kèm <strong>3 bịch bánh tráng ngũ vị</strong> thơm ngon.
                 </p>
               </div>
             </div>
