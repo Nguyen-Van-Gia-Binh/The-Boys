@@ -141,10 +141,10 @@ export const PRODUCTS: Product[] = [
     color: "bg-[#f1a7a7]",
     options: {
       sizes: [
-        { name: "3 Hoa hồng", price: 79000 },
-        { name: "2 Hồng + 1 Đồng tiền (+5k)", price: 84000 },
-        { name: "1 Hồng + 2 Đồng tiền (+10k)", price: 89000 },
-        { name: "3 Hoa đồng tiền (+15k)", price: 94000 },
+        { name: "3 hoa hồng", price: 79000 },
+        { name: "2 hồng + 1 đồng tiền", price: 84000 },
+        { name: "1 hồng + 2 đồng tiền", price: 89000 },
+        { name: "3 hoa đồng tiền", price: 94000 },
       ],
     },
   },
@@ -159,20 +159,20 @@ export const PRODUCTS: Product[] = [
     color: "bg-[#ea899a]",
     options: {
       sizes: [
-        { name: "5 Hoa hồng", price: 119000 },
-        { name: "4 Hồng + 1 Đồng tiền (+5k)", price: 124000 },
-        { name: "3 Hồng + 2 Đồng tiền (+10k)", price: 129000 },
-        { name: "2 Hồng + 3 Đồng tiền (+15k)", price: 134000 },
-        { name: "1 Hồng + 4 Đồng tiền (+20k)", price: 139000 },
-        { name: "5 Hoa đồng tiền (+25k)", price: 144000 },
+        { name: "5 hoa hồng", price: 119000 },
+        { name: "4 hồng + 1 đồng tiền", price: 124000 },
+        { name: "3 hồng + 2 đồng tiền", price: 129000 },
+        { name: "2 hồng + 3 đồng tiền", price: 134000 },
+        { name: "1 hồng + 4 đồng tiền", price: 139000 },
+        { name: "5 hoa đồng tiền", price: 144000 },
       ],
     },
   },
 
   // --- COMBO 17/10 ---
   {
-    id: "combo-trai-nghiem",
-    name: "Trải nghiệm",
+    id: "combo-gui-loi",
+    name: "Gửi lời",
     price: 59000,
     category: "combo",
     isCombo: true,
@@ -181,7 +181,7 @@ export const PRODUCTS: Product[] = [
       quantity: 2,
       description: "Tặng 2 bịch Bánh tráng ngũ vị khi đặt trước",
     },
-    note: "1 ảnh in + 1 thiệp handmade tự decor và viết thư tri ân",
+    note: "1 ảnh in + 1 thiệp handmade (Tự trang trí & viết thư tri ân)",
     image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&auto=format&fit=crop&q=80",
     badge: "59K",
     color: "bg-[#d8e2dc]",
@@ -203,8 +203,8 @@ export const PRODUCTS: Product[] = [
     color: "bg-[#ffe5d9]",
     options: {
       sizes: [
-        { name: "1 Hoa hồng", price: 89000 },
-        { name: "1 Hoa đồng tiền (+5k)", price: 94000 },
+        { name: "Hoa hồng", price: 89000 },
+        { name: "Hoa đồng tiền", price: 94000 },
       ],
     },
   },
@@ -225,10 +225,10 @@ export const PRODUCTS: Product[] = [
     color: "bg-[#ffcad4]",
     options: {
       sizes: [
-        { name: "3 Hoa hồng", price: 139000 },
-        { name: "2 Hồng + 1 Đồng tiền (+5k)", price: 144000 },
-        { name: "1 Hồng + 2 Đồng tiền (+10k)", price: 149000 },
-        { name: "3 Hoa đồng tiền (+15k)", price: 154000 },
+        { name: "3 hoa hồng", price: 139000 },
+        { name: "2 hồng + 1 đồng tiền", price: 144000 },
+        { name: "1 hồng + 2 đồng tiền", price: 149000 },
+        { name: "3 hoa đồng tiền", price: 154000 },
       ],
     },
   },
@@ -249,12 +249,12 @@ export const PRODUCTS: Product[] = [
     color: "bg-[#b7e4c7]",
     options: {
       sizes: [
-        { name: "5 Hoa hồng", price: 179000 },
-        { name: "4 Hồng + 1 Đồng tiền (+5k)", price: 184000 },
-        { name: "3 Hồng + 2 Đồng tiền (+10k)", price: 189000 },
-        { name: "2 Hồng + 3 Đồng tiền (+15k)", price: 194000 },
-        { name: "1 Hồng + 4 Đồng tiền (+20k)", price: 199000 },
-        { name: "5 Hoa đồng tiền (+25k)", price: 204000 },
+        { name: "5 hoa hồng", price: 179000 },
+        { name: "4 hồng + 1 đồng tiền", price: 184000 },
+        { name: "3 hồng + 2 đồng tiền", price: 189000 },
+        { name: "2 hồng + 3 đồng tiền", price: 194000 },
+        { name: "1 hồng + 4 đồng tiền", price: 199000 },
+        { name: "5 hoa đồng tiền", price: 204000 },
       ],
     },
   },

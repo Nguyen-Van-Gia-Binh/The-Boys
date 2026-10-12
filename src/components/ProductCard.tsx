@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Check, Sparkles, Gift } from "lucide-react";
+import { Plus, Check, Sparkles, Gift, ChevronDown } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
 
@@ -91,23 +91,47 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Size / Option Selector if exists */}
         {hasSizes && (
           <div className="mt-3 space-y-1.5">
-            <span className="text-[11px] font-semibold text-[var(--brand-muted)]">Chọn loại / biến thể:</span>
-            <div className="flex flex-wrap gap-1.5">
-              {product.options!.sizes!.map((size, idx) => (
-                <button
-                  key={size.name}
-                  type="button"
-                  onClick={() => setSelectedSizeIdx(idx)}
-                  className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${
-                    selectedSizeIdx === idx
-                      ? "bg-[#315444] text-white shadow-sm"
-                      : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-text)] hover:border-[#315444]"
-                  }`}
+            <label className="block text-[11px] font-semibold text-[var(--brand-muted)]">
+              Chọn biến thể / số bông:
+            </label>
+            {product.options!.sizes!.length <= 2 ? (
+              <div className="grid grid-cols-2 gap-2">
+                {product.options!.sizes!.map((size, idx) => (
+                  <button
+                    key={size.name}
+                    type="button"
+                    onClick={() => setSelectedSizeIdx(idx)}
+                    className={`rounded-xl py-2 px-2 text-xs font-semibold text-center transition ${
+                      selectedSizeIdx === idx
+                        ? "bg-[#315444] text-white shadow-sm ring-1 ring-[#315444]"
+                        : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-text)] hover:border-[#315444]"
+                    }`}
+                  >
+                    <span className="block truncate">{size.name}</span>
+                    <span className="block text-[11px] font-bold mt-0.5 opacity-90">
+                      {size.price.toLocaleString("vi-VN")}đ
+                    </span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="relative">
+                <select
+                  value={selectedSizeIdx}
+                  onChange={(e) => setSelectedSizeIdx(Number(e.target.value))}
+                  className="w-full appearance-none rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] py-2.5 pl-3 pr-8 text-xs font-semibold text-[var(--brand-heading)] outline-none focus:border-[#315444] focus:ring-1 focus:ring-[#315444] transition cursor-pointer"
                 >
-                  {size.name} ({size.price.toLocaleString("vi-VN")}đ)
-                </button>
-              ))}
-            </div>
+                  {product.options!.sizes!.map((size, idx) => (
+                    <option key={size.name} value={idx}>
+                      {size.name} — {size.price.toLocaleString("vi-VN")}đ
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-[var(--brand-muted)]">
+                  <ChevronDown className="size-4" />
+                </div>
+              </div>
+            )}
           </div>
         )}
 
