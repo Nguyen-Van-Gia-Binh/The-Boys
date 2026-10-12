@@ -47,6 +47,11 @@ export interface OrderFormData {
   pickupLocation: string;
   pickupTime: string;
   customPickupTime?: string;
+  flowerPickupDate?: string;
+  flowerPickupLocation?: string;
+  flowerPickupTime?: string;
+  flowerCustomPickupTime?: string;
+  isMixedOrder?: boolean;
   paymentMethod: "cash" | "bank_transfer";
 }
 

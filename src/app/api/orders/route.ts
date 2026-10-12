@@ -38,6 +38,24 @@ export async function POST(req: NextRequest) {
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
     let sheetSynced = false;
 
+    // Định dạng thông tin nhận hàng (hỗ trợ tách bạch lịch nhận khi là đơn hỗn hợp Đồ ăn + Hoa/Combo)
+    let finalPickupDate = body.pickupDate;
+    let finalPickupTime = body.pickupTime === "custom" ? (body.customPickupTime || "Tự chọn") : body.pickupTime;
+    let finalPickupLocation = body.pickupLocation;
+    let finalNote = body.note || "";
+
+    if (body.isMixedOrder && body.flowerPickupDate) {
+      const flowerTime =
+        body.flowerPickupTime === "custom"
+          ? body.flowerCustomPickupTime || "Tự chọn"
+          : body.flowerPickupTime || "08:00 - 09:00";
+      const flowerLoc = body.flowerPickupLocation || "Sảnh Gương — Nơi tổ chức Workshop (Ngày 17/10)";
+      finalPickupDate = `Đồ ăn: ${body.pickupDate} | Hoa: ${body.flowerPickupDate}`;
+      finalPickupTime = `Đồ ăn: ${finalPickupTime} | Hoa: ${flowerTime}`;
+      finalPickupLocation = `Đồ ăn: ${body.pickupLocation} | Hoa: ${flowerLoc}`;
+      finalNote = `[ĐƠN HỖN HỢP: Đồ ăn nhận ${body.pickupDate} tại ${body.pickupLocation} (${finalPickupTime}); Hoa/Combo nhận ${body.flowerPickupDate} tại ${flowerLoc} (${flowerTime})]${body.note ? ` | Note: ${body.note}` : ""}`.trim();
+    }
+
     if (webhookUrl && webhookUrl.startsWith("http")) {
       try {
         const sheetPayload = {
@@ -46,16 +64,16 @@ export async function POST(req: NextRequest) {
           customerName: body.name,
           phone: body.phone,
           email: body.email,
-          pickupDate: body.pickupDate,
-          pickupTime: body.pickupTime === "custom" ? (body.customPickupTime || "Tự chọn") : body.pickupTime,
-          pickupLocation: body.pickupLocation,
+          pickupDate: finalPickupDate,
+          pickupTime: finalPickupTime,
+          pickupLocation: finalPickupLocation,
           address: body.address || "",
           items: itemsSummary,
           subtotal: body.subtotal,
           discount: body.discountAmount || 0,
           total: body.total,
           paymentMethod: "Chuyển khoản VietQR",
-          note: body.note || "",
+          note: finalNote,
           status: initialStatus,
         };
 

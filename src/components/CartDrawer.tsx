@@ -27,9 +27,16 @@ export default function CartDrawer() {
     addPastOrder,
   } = useCart();
 
+  // Phân loại nhóm món trong giỏ:
+  const hasSnackOrDrink = items.some(
+    (it) => it.product.category === "snack" || it.product.category === "drink"
+  );
   const hasFlowerOrCombo = items.some(
     (it) => it.product.category === "flower" || it.product.category === "combo" || it.product.isCombo
   );
+  const isMixedOrder = hasSnackOrDrink && hasFlowerOrCombo;
+  const isSnackOnly = hasSnackOrDrink && !hasFlowerOrCombo;
+  const isFlowerOnly = !hasSnackOrDrink && hasFlowerOrCombo;
 
   const [formData, setFormData] = useState<OrderFormData>({
     name: "",
@@ -38,33 +45,52 @@ export default function CartDrawer() {
     address: "",
     note: "",
     pickupDate: "2026-10-13",
-    pickupLocation: CAMPAIGN_INFO.pickupLocations[0],
+    pickupLocation: CAMPAIGN_INFO.pickupLocations[1] || CAMPAIGN_INFO.pickupLocations[0],
     pickupTime: CAMPAIGN_INFO.pickupTimeSlots[0],
     customPickupTime: "",
+    flowerPickupDate: "2026-10-17",
+    flowerPickupLocation: "Sảnh Gương — Nơi tổ chức Workshop (Ngày 17/10)",
+    flowerPickupTime: CAMPAIGN_INFO.pickupTimeSlots[0],
+    flowerCustomPickupTime: "",
+    isMixedOrder: false,
     paymentMethod: "bank_transfer",
   });
 
-  // Tự động chuyển mặc định ngày nhận thành 17/10 và địa điểm Sảnh Gương khi giỏ hàng có Hoa hoặc Combo
+  // Tự động đồng bộ và tinh chỉnh thông tin nhận hàng theo từng nhóm đơn:
   useEffect(() => {
-    if (hasFlowerOrCombo) {
-      setFormData((prev) => {
-        const needDateUpdate = !prev.pickupDate || prev.pickupDate < "2026-10-17";
-        const needLocationUpdate =
-          !prev.pickupLocation ||
-          prev.pickupLocation.includes("Sảnh chính") ||
-          !prev.pickupLocation.includes("Sảnh Gương");
-
-        if (needDateUpdate || needLocationUpdate) {
-          return {
-            ...prev,
-            pickupDate: needDateUpdate ? "2026-10-17" : prev.pickupDate,
-            pickupLocation: needLocationUpdate ? CAMPAIGN_INFO.pickupLocations[0] : prev.pickupLocation,
-          };
-        }
-        return prev;
-      });
-    }
-  }, [hasFlowerOrCombo]);
+    setFormData((prev) => {
+      if (isFlowerOnly) {
+        // Chỉ có hoa/combo: chuyển ngày thành 17/10 và địa điểm là Sảnh Gương
+        return {
+          ...prev,
+          pickupDate: "2026-10-17",
+          pickupLocation: "Sảnh Gương — Nơi tổ chức Workshop (Ngày 17/10)",
+          isMixedOrder: false,
+        };
+      } else if (isMixedOrder) {
+        // Đơn hỗn hợp: món ăn nhận theo địa điểm thông thường, hoa/combo nhận 17/10 tại Sảnh Gương
+        return {
+          ...prev,
+          pickupLocation: prev.pickupLocation.includes("Sảnh Gương")
+            ? (CAMPAIGN_INFO.pickupLocations[1] || "Khuôn viên Đại học FPT TP.HCM (Sảnh chính)")
+            : prev.pickupLocation,
+          flowerPickupDate: "2026-10-17",
+          flowerPickupLocation: "Sảnh Gương — Nơi tổ chức Workshop (Ngày 17/10)",
+          flowerPickupTime: prev.flowerPickupTime || CAMPAIGN_INFO.pickupTimeSlots[0],
+          isMixedOrder: true,
+        };
+      } else {
+        // Chỉ có đồ ăn/uống lẻ: không ràng buộc 17/10
+        return {
+          ...prev,
+          pickupLocation: prev.pickupLocation.includes("Sảnh Gương")
+            ? (CAMPAIGN_INFO.pickupLocations[1] || "Khuôn viên Đại học FPT TP.HCM (Sảnh chính)")
+            : prev.pickupLocation,
+          isMixedOrder: false,
+        };
+      }
+    });
+  }, [isFlowerOnly, isMixedOrder, isSnackOnly]);
 
   const [orderCode, setOrderCode] = useState(() => `DH${Math.floor(1000 + Math.random() * 9000)}`);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
@@ -89,8 +115,8 @@ export default function CartDrawer() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    // Nếu đơn có hoa hoặc combo, không cho chọn ngày trước 17/10
-    if (name === "pickupDate" && hasFlowerOrCombo && value < "2026-10-17") {
+    // Nếu đơn chỉ gồm hoa/combo, không cho chọn ngày trước 17/10
+    if (name === "pickupDate" && isFlowerOnly && value < "2026-10-17") {
       setFormData((prev) => ({ ...prev, pickupDate: "2026-10-17" }));
       return;
     }
@@ -111,8 +137,8 @@ export default function CartDrawer() {
       return;
     }
 
-    if (hasFlowerOrCombo && formData.pickupDate < "2026-10-17") {
-      setErrorMessage("Đơn hàng có chứa Hoa hoặc Combo Workshop chỉ bắt đầu nhận từ ngày 17/10/2026.");
+    if (isFlowerOnly && formData.pickupDate < "2026-10-17") {
+      setErrorMessage("Đơn hàng chỉ gồm Hoa hoặc Combo Workshop sẽ bắt đầu nhận từ ngày 17/10/2026.");
       return;
     }
 
@@ -120,6 +146,7 @@ export default function CartDrawer() {
 
     const payload: OrderPayload = {
       ...formData,
+      isMixedOrder,
       id: orderCode,
       items: items.map((it) => ({
         productId: it.product.id,
@@ -242,13 +269,36 @@ export default function CartDrawer() {
                   </p>
                   <div className="mt-6 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-left text-xs space-y-1.5 w-full">
                     <p><strong>Người nhận:</strong> {successOrder.name} ({successOrder.phone})</p>
-                    <p><strong>Địa điểm:</strong> {successOrder.pickupLocation}</p>
-                    <p><strong>Thời gian:</strong> {successOrder.pickupDate} ({successOrder.pickupTime})</p>
-                    {successOrder.pickupLocation.includes("Sảnh Gương") && (
-                      <div className="rounded-xl border border-[#df8143]/30 bg-[#df8143]/10 p-2.5 text-xs text-[#b93815] dark:text-[#f39c5b] font-bold flex items-center gap-2">
-                        <Sparkles className="size-4 shrink-0 text-[#df8143]" />
-                        <span>Hẹn gặp bạn tại <strong>Sảnh Gương (Workshop)</strong> từ 08:00 sáng ngày 17/10 nhé!</span>
+                    {successOrder.isMixedOrder ? (
+                      <div className="space-y-2 pt-1 pb-1">
+                        <div className="rounded-xl border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/30 p-2.5 text-xs text-emerald-900 dark:text-emerald-200">
+                          <p className="font-bold flex items-center gap-1.5 text-emerald-800 dark:text-emerald-300">
+                            <span>🍱</span>
+                            <span>Lịch nhận Đồ ăn / Thức uống:</span>
+                          </p>
+                          <p className="mt-0.5 text-[11px]">Ngày: <strong>{successOrder.pickupDate}</strong> ({successOrder.pickupTime})</p>
+                          <p className="text-[11px]">Tại: <strong>{successOrder.pickupLocation}</strong></p>
+                        </div>
+                        <div className="rounded-xl border border-[#df8143]/40 bg-[#df8143]/10 p-2.5 text-xs text-[#b93815] dark:text-[#f39c5b]">
+                          <p className="font-bold flex items-center gap-1.5">
+                            <span>🌸</span>
+                            <span>Lịch nhận Hoa tươi & Combo Workshop:</span>
+                          </p>
+                          <p className="mt-0.5 text-[11px]">Ngày: <strong>{successOrder.flowerPickupDate || "17/10/2026"}</strong> ({successOrder.flowerPickupTime || "Từ 08:00 sáng"})</p>
+                          <p className="text-[11px]">Tại: <strong>{successOrder.flowerPickupLocation || "Sảnh Gương — Nơi tổ chức Workshop"}</strong></p>
+                        </div>
                       </div>
+                    ) : (
+                      <>
+                        <p><strong>Địa điểm:</strong> {successOrder.pickupLocation}</p>
+                        <p><strong>Thời gian:</strong> {successOrder.pickupDate} ({successOrder.pickupTime})</p>
+                        {successOrder.pickupLocation.includes("Sảnh Gương") && (
+                          <div className="rounded-xl border border-[#df8143]/30 bg-[#df8143]/10 p-2.5 text-xs text-[#b93815] dark:text-[#f39c5b] font-bold flex items-center gap-2">
+                            <Sparkles className="size-4 shrink-0 text-[#df8143]" />
+                            <span>Hẹn gặp bạn tại <strong>Sảnh Gương (Workshop)</strong> từ 08:00 sáng ngày 17/10 nhé!</span>
+                          </div>
+                        )}
+                      </>
                     )}
                     {successOrder.giftSummary && (
                       <p className="rounded-xl bg-[#df8143]/15 p-2.5 font-bold text-[#b93815] dark:text-[#f39c5b] flex items-center gap-1.5">
@@ -464,8 +514,32 @@ export default function CartDrawer() {
                     </div>
                   </div>
 
-                  {/* THÔNG BÁO GIAO NHẬN HOA & COMBO 17/10 TẠI SẢNH GƯƠNG */}
-                  {hasFlowerOrCombo && (
+                  {/* THÔNG BÁO CHO ĐƠN HỖN HỢP: CÓ CẢ ĐỒ ĂN/UỐNG VÀ HOA/COMBO */}
+                  {isMixedOrder && (
+                    <div className="mt-4 overflow-hidden rounded-2xl border-2 border-[#df8143] bg-gradient-to-br from-[#df8143]/15 via-[#df8143]/8 to-[#df8143]/3 p-4 shadow-sm">
+                      <div className="flex items-start gap-3">
+                        <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#df8143] to-[#b93815] text-white shadow-md shadow-[#df8143]/20">
+                          <Sparkles className="size-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <h4 className="text-xs font-black uppercase tracking-wider text-[#b93815] dark:text-[#f39c5b]">
+                              Đơn hỗn hợp: Đồ ăn & Hoa / Combo
+                            </h4>
+                            <span className="rounded-full bg-[#df8143] px-2 py-0.5 text-[10px] font-extrabold text-white">
+                              Tách lịch nhận
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[12px] leading-relaxed text-[var(--brand-text)] font-medium">
+                            Đơn hàng của bạn gồm cả <strong>Món ăn/Uống</strong> và <strong>Hoa tươi/Combo</strong>. Nhóm The Boys đã chia sẵn <strong>2 lịch nhận riêng biệt</strong> bên dưới để bạn nhận đồ ăn linh hoạt trong tuần (13-17/10) và nhận hoa tươi tại Workshop ngày 17/10 nhé!
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* THÔNG BÁO CHO ĐƠN CHỈ CÓ HOA / COMBO */}
+                  {isFlowerOnly && (
                     <div className="mt-4 overflow-hidden rounded-2xl border-2 border-[#df8143] bg-gradient-to-br from-[#df8143]/15 via-[#df8143]/8 to-[#df8143]/3 p-4 shadow-sm">
                       <div className="flex items-start gap-3">
                         <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#df8143] to-[#b93815] text-white shadow-md shadow-[#df8143]/20">
@@ -481,7 +555,7 @@ export default function CartDrawer() {
                             </span>
                           </div>
                           <p className="mt-1 text-[12px] leading-relaxed text-[var(--brand-text)] font-medium">
-                            Để đảm bảo <strong>hoa tươi mới nhất</strong> và kịp thời cho các hoạt động trải nghiệm workshop, đơn hàng có <strong>Hoa hoặc Combo</strong> sẽ được giao nhận theo lịch sau:
+                            Để đảm bảo <strong>hoa tươi mới nhất</strong> cho ngày hội, đơn hàng Hoa & Combo sẽ được trao trực tiếp tại <strong>Sảnh Gương</strong> từ <strong>08:00 sáng ngày 17/10/2026</strong>.
                           </p>
 
                           <div className="mt-2.5 space-y-1.5 rounded-xl border border-[#df8143]/30 bg-[var(--brand-surface)]/95 p-3 text-[11.5px] font-semibold text-[var(--brand-heading)]">
@@ -506,7 +580,7 @@ export default function CartDrawer() {
                   {/* FORM THÔNG TIN NHẬN HÀNG */}
                   <form onSubmit={handleSubmitOrder} className="mt-6 space-y-3.5">
                     <p className="text-sm font-bold text-[#315444] uppercase tracking-wide">
-                      Thông tin nhận hàng
+                      Thông tin người nhận
                     </p>
 
                     {/* Họ và tên */}
@@ -553,131 +627,269 @@ export default function CartDrawer() {
 
                     {/* Địa chỉ chi tiết */}
                     <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      Địa chỉ chi tiết (không bắt buộc)
+                      Địa chỉ chi tiết (phòng học / vị trí cụ thể)
                       <textarea
                         name="address"
                         rows={2}
                         value={formData.address}
                         onChange={handleInputChange}
-                        placeholder="Nhập địa chỉ, phòng học, tòa nhà hoặc số phòng..."
+                        placeholder="Nhập phòng học, tòa nhà hoặc số phòng..."
                         className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition resize-none"
                       />
                     </label>
 
                     {/* Ghi chú */}
                     <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      Ghi chú cho đơn hàng (không bắt buộc)
+                      Ghi chú thêm cho đơn hàng (không bắt buộc)
                       <textarea
                         name="note"
                         rows={2}
                         value={formData.note}
                         onChange={handleInputChange}
-                        placeholder="Yêu cầu riêng của bạn, ví dụ: ít cay, giao trước 10h..."
+                        placeholder="Yêu cầu riêng của bạn, ví dụ: ít cay, mang trước 10h..."
                         className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition resize-none"
                       />
                     </label>
 
-                    {/* Ngày nhận */}
-                    <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      <div className="flex items-center justify-between">
-                        <span>Ngày nhận <span className="text-red-500">*</span></span>
-                        {hasFlowerOrCombo && (
-                          <span className="text-[11px] font-bold text-[#b93815] dark:text-[#f39c5b]">
-                            Hoa & Combo nhận từ 17/10
-                          </span>
+                    {/* KHU VỰC THỜI GIAN & ĐỊA ĐIỂM GIAO NHẬN */}
+                    {isMixedOrder ? (
+                      /* TRƯỜNG HỢP ĐƠN HỖN HỢP: TÁCH 2 KHỐI RÕ RÀNG */
+                      <div className="space-y-4 pt-2">
+                        {/* KHỐI 1: LỊCH NHẬN ĐỒ ĂN VẶT & ĐỒ UỐNG */}
+                        <div className="rounded-2xl border border-emerald-500/35 bg-emerald-50/40 dark:bg-emerald-950/25 p-3.5 space-y-3 shadow-xs">
+                          <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wide">
+                            <span className="flex size-5 items-center justify-center rounded-full bg-emerald-600 text-white text-[10px]">1</span>
+                            <span>Lịch nhận Đồ ăn vặt / Thức uống (Linh hoạt trong tuần)</span>
+                          </div>
+                          <p className="text-[11px] text-[var(--brand-muted)]">
+                            Bạn có thể chọn nhận bánh tráng, nước uống ngay trong tuần (từ ngày 13/10 đến 17/10):
+                          </p>
+
+                          {/* Ngày nhận món ăn */}
+                          <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                            Ngày nhận đồ ăn/uống <span className="text-red-500">*</span>
+                            <input
+                              required
+                              type="date"
+                              name="pickupDate"
+                              min={todayStr}
+                              value={formData.pickupDate}
+                              onChange={handleInputChange}
+                              className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                            />
+                          </label>
+
+                          {/* Địa điểm nhận món ăn */}
+                          <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                            Địa điểm nhận đồ ăn/uống <span className="text-red-500">*</span>
+                            <select
+                              required
+                              name="pickupLocation"
+                              value={formData.pickupLocation}
+                              onChange={handleInputChange}
+                              className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                            >
+                              {CAMPAIGN_INFO.pickupLocations.map((loc) => (
+                                <option key={loc} value={loc}>
+                                  {loc}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+
+                          {/* Khung giờ nhận món ăn */}
+                          <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                            Khung giờ nhận đồ ăn/uống <span className="text-red-500">*</span>
+                            <select
+                              required
+                              name="pickupTime"
+                              value={formData.pickupTime}
+                              onChange={handleInputChange}
+                              className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                            >
+                              {CAMPAIGN_INFO.pickupTimeSlots.map((slot) => (
+                                <option key={slot} value={slot}>
+                                  {slot === "custom" ? "Khác (thời gian cụ thể bạn muốn nhận)" : slot}
+                                </option>
+                              ))}
+                            </select>
+                          </label>
+                          {formData.pickupTime === "custom" && (
+                            <input
+                              required
+                              type="text"
+                              name="customPickupTime"
+                              value={formData.customPickupTime}
+                              onChange={handleInputChange}
+                              placeholder="Nhập giờ bạn muốn nhận đồ ăn/nước uống..."
+                              className="w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444]"
+                            />
+                          )}
+                        </div>
+
+                        {/* KHỐI 2: LỊCH NHẬN HOA TƯƠI & COMBO WORKSHOP */}
+                        <div className="rounded-2xl border-2 border-[#df8143]/45 bg-[#df8143]/10 dark:bg-[#df8143]/15 p-3.5 space-y-3 shadow-xs">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-xs font-bold text-[#b93815] dark:text-[#f39c5b] uppercase tracking-wide">
+                              <span className="flex size-5 items-center justify-center rounded-full bg-[#df8143] text-white text-[10px]">2</span>
+                              <span>Lịch nhận Hoa tươi & Combo Workshop</span>
+                            </div>
+                            <span className="rounded-full bg-[#df8143] px-2 py-0.5 text-[10px] font-extrabold text-white">
+                              17/10/2026
+                            </span>
+                          </div>
+
+                          <div className="rounded-xl border border-[#df8143]/30 bg-[var(--brand-surface)]/95 p-3 text-xs space-y-1.5 font-semibold text-[var(--brand-heading)]">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="size-4 text-[#df8143] shrink-0" />
+                              <span>Ngày nhận hoa: <strong className="text-[#b93815] dark:text-[#f39c5b]">17/10/2026</strong> (Ngày hội Workshop)</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MapPin className="size-4 text-[#315444] dark:text-emerald-400 shrink-0" />
+                              <span>Địa điểm: <strong className="text-[#315444] dark:text-emerald-400">Sảnh Gương — Nơi tổ chức Workshop</strong></span>
+                            </div>
+                          </div>
+
+                          {/* Khung giờ nhận hoa 17/10 */}
+                          <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                            Khung giờ nhận hoa tại Sảnh Gương ngày 17/10 <span className="text-red-500">*</span>
+                            <select
+                              required
+                              name="flowerPickupTime"
+                              value={formData.flowerPickupTime || CAMPAIGN_INFO.pickupTimeSlots[0]}
+                              onChange={handleInputChange}
+                              className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                            >
+                              {CAMPAIGN_INFO.pickupTimeSlots.map((slot) => (
+                                <option key={slot} value={slot}>
+                                  {slot === "custom" ? "Khác (thời gian bạn đến Sảnh Gương)" : slot}
+                                </option>
+                              ))}
+                            </select>
+                            <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
+                              ⏰ Hoa tươi và workshop bắt đầu phục vụ bạn từ <strong>08:00 sáng</strong> trở đi.
+                            </p>
+                          </label>
+
+                          {formData.flowerPickupTime === "custom" && (
+                            <input
+                              required
+                              type="text"
+                              name="flowerCustomPickupTime"
+                              value={formData.flowerCustomPickupTime || ""}
+                              onChange={handleInputChange}
+                              placeholder="Nhập giờ bạn đến Sảnh Gương nhận hoa / tham gia workshop..."
+                              className="w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444]"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      /* TRƯỜNG HỢP ĐƠN ĐỒNG NHẤT (Chỉ Đồ ăn/Nước HOẶC Chỉ Hoa/Combo) */
+                      <div className="space-y-3.5 pt-1">
+                        {/* Ngày nhận */}
+                        <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                          <div className="flex items-center justify-between">
+                            <span>Ngày nhận <span className="text-red-500">*</span></span>
+                            {isFlowerOnly && (
+                              <span className="text-[11px] font-bold text-[#b93815] dark:text-[#f39c5b]">
+                                Hoa & Combo nhận 17/10
+                              </span>
+                            )}
+                          </div>
+                          <input
+                            required
+                            type="date"
+                            name="pickupDate"
+                            min={isFlowerOnly ? "2026-10-17" : todayStr}
+                            value={formData.pickupDate}
+                            onChange={handleInputChange}
+                            className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                          />
+                          {isFlowerOnly ? (
+                            <p className="mt-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
+                              🌸 Đơn có Hoa/Combo: Nhận từ ngày <strong>17/10/2026</strong> tại Sảnh Gương để đảm bảo hoa tươi mới nhất cho Workshop.
+                            </p>
+                          ) : (
+                            <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
+                              Đồ ăn vặt & thức uống có thể nhận linh hoạt từ ngày 13/10/2026.
+                            </p>
+                          )}
+                        </label>
+
+                        {/* Địa điểm nhận */}
+                        <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                          <div className="flex items-center justify-between">
+                            <span>Địa điểm nhận <span className="text-red-500">*</span></span>
+                            {isFlowerOnly && (
+                              <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+                                Khuyên chọn Sảnh Gương
+                              </span>
+                            )}
+                          </div>
+                          <select
+                            required
+                            name="pickupLocation"
+                            value={formData.pickupLocation}
+                            onChange={handleInputChange}
+                            className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                          >
+                            {CAMPAIGN_INFO.pickupLocations.map((loc) => (
+                              <option key={loc} value={loc}>
+                                {loc}
+                              </option>
+                            ))}
+                          </select>
+                          {isFlowerOnly && (
+                            <p className="mt-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                              📍 Nhận tại <strong>Sảnh Gương</strong> (nơi tổ chức Workshop) để tham gia cắm hoa, in ảnh và viết thiệp tri ân trọn vẹn nhất!
+                            </p>
+                          )}
+                        </label>
+
+                        {/* Khung giờ nhận */}
+                        <label className="block text-xs font-semibold text-[var(--brand-heading)]">
+                          <div className="flex items-center justify-between">
+                            <span>Khung giờ nhận <span className="text-red-500">*</span></span>
+                            {isFlowerOnly && (
+                              <span className="text-[11px] font-bold text-[#315444] dark:text-emerald-400">
+                                Từ 08:00 sáng trở đi
+                              </span>
+                            )}
+                          </div>
+                          <select
+                            required
+                            name="pickupTime"
+                            value={formData.pickupTime}
+                            onChange={handleInputChange}
+                            className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
+                          >
+                            {CAMPAIGN_INFO.pickupTimeSlots.map((slot) => (
+                              <option key={slot} value={slot}>
+                                {slot === "custom" ? "Khác (thời gian cụ thể bạn muốn nhận)" : slot}
+                              </option>
+                            ))}
+                          </select>
+                          {isFlowerOnly && (
+                            <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
+                              ⏰ Hoa và Combo bắt đầu sẵn sàng bàn giao từ <strong>08:00 sáng</strong> ngày 17/10.
+                            </p>
+                          )}
+                        </label>
+
+                        {/* Custom pickup time if chosen */}
+                        {formData.pickupTime === "custom" && (
+                          <input
+                            required
+                            type="text"
+                            name="customPickupTime"
+                            value={formData.customPickupTime}
+                            onChange={handleInputChange}
+                            placeholder="Nhập giờ cụ thể bạn muốn nhận hàng..."
+                            className="w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444]"
+                          />
                         )}
                       </div>
-                      <input
-                        required
-                        type="date"
-                        name="pickupDate"
-                        min={hasFlowerOrCombo ? "2026-10-17" : todayStr}
-                        value={formData.pickupDate}
-                        onChange={handleInputChange}
-                        className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
-                      />
-                      {hasFlowerOrCombo ? (
-                        <p className="mt-1 text-[11px] font-medium text-amber-700 dark:text-amber-400">
-                          🌸 Đơn có Hoa/Combo: Nhận từ ngày <strong>17/10/2026</strong> tại Sảnh Gương để đảm bảo hoa tươi mới nhất cho Workshop.
-                        </p>
-                      ) : (
-                        <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
-                          Đồ ăn vặt & thức uống có thể nhận từ ngày 13/10/2026.
-                        </p>
-                      )}
-                    </label>
-
-                    {/* Địa điểm nhận */}
-                    <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      <div className="flex items-center justify-between">
-                        <span>Địa điểm nhận <span className="text-red-500">*</span></span>
-                        {hasFlowerOrCombo && (
-                          <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
-                            Khuyên chọn Sảnh Gương
-                          </span>
-                        )}
-                      </div>
-                      <select
-                        required
-                        name="pickupLocation"
-                        value={formData.pickupLocation}
-                        onChange={handleInputChange}
-                        className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
-                      >
-                        {CAMPAIGN_INFO.pickupLocations.map((loc) => (
-                          <option key={loc} value={loc}>
-                            {loc}
-                          </option>
-                        ))}
-                      </select>
-                      {hasFlowerOrCombo && (
-                        <p className="mt-1 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
-                          📍 Nhận tại <strong>Sảnh Gương</strong> (nơi tổ chức Workshop) để tham gia cắm hoa, in ảnh và viết thiệp tri ân trọn vẹn nhất!
-                        </p>
-                      )}
-                    </label>
-
-                    {/* Khung giờ nhận */}
-                    <label className="block text-xs font-semibold text-[var(--brand-heading)]">
-                      <div className="flex items-center justify-between">
-                        <span>Khung giờ nhận <span className="text-red-500">*</span></span>
-                        {hasFlowerOrCombo && (
-                          <span className="text-[11px] font-bold text-[#315444] dark:text-emerald-400">
-                            Từ 08:00 sáng trở đi
-                          </span>
-                        )}
-                      </div>
-                      <select
-                        required
-                        name="pickupTime"
-                        value={formData.pickupTime}
-                        onChange={handleInputChange}
-                        className="mt-1 w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444] transition"
-                      >
-                        {CAMPAIGN_INFO.pickupTimeSlots.map((slot) => (
-                          <option key={slot} value={slot}>
-                            {slot === "custom" ? "Khác (thời gian cụ thể bạn muốn nhận)" : slot}
-                          </option>
-                        ))}
-                      </select>
-                      {hasFlowerOrCombo && (
-                        <p className="mt-1 text-[11px] text-[var(--brand-muted)]">
-                          ⏰ Hoa và Combo bắt đầu sẵn sàng bàn giao từ <strong>08:00 sáng</strong> ngày 17/10.
-                        </p>
-                      )}
-                    </label>
-
-                    {/* Custom pickup time if chosen */}
-                    {formData.pickupTime === "custom" && (
-                      <input
-                        required
-                        type="text"
-                        name="customPickupTime"
-                        value={formData.customPickupTime}
-                        onChange={handleInputChange}
-                        placeholder="Nhập giờ cụ thể bạn muốn nhận hàng..."
-                        className="w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3.5 py-2.5 text-sm font-normal text-[var(--brand-text)] outline-none focus:border-[#315444]"
-                      />
                     )}
 
                     {/* Phương thức thanh toán duy nhất: Chuyển khoản VietQR */}
@@ -835,9 +1047,16 @@ export default function CartDrawer() {
                         <span>Tổng tiền:</span>
                         <span className="text-[#df8143]">{ord.total.toLocaleString("vi-VN")}đ</span>
                       </div>
-                      <div className="text-[11px] text-[var(--brand-muted)]">
-                        Nhận ngày {ord.pickupDate} ({ord.pickupTime}) tại {ord.pickupLocation}
-                      </div>
+                      {ord.isMixedOrder ? (
+                        <div className="space-y-1 text-[11px] text-[var(--brand-muted)] border-t border-[var(--brand-border)] pt-2">
+                          <div>🍱 <strong>Đồ ăn/uống:</strong> {ord.pickupDate} ({ord.pickupTime}) tại {ord.pickupLocation}</div>
+                          <div>🌸 <strong>Hoa/Combo:</strong> {ord.flowerPickupDate || "17/10/2026"} ({ord.flowerPickupTime || "Từ 08:00 sáng"}) tại {ord.flowerPickupLocation || "Sảnh Gương (Workshop)"}</div>
+                        </div>
+                      ) : (
+                        <div className="text-[11px] text-[var(--brand-muted)]">
+                          Nhận ngày {ord.pickupDate} ({ord.pickupTime}) tại {ord.pickupLocation}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
