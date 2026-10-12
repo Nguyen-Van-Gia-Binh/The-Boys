@@ -82,7 +82,7 @@ export default function CustomerOrdersDrawer() {
         setLastSyncedTime(timeString);
 
         if (isManualSync) {
-          setSyncNotice("Đã đồng bộ dữ liệu mới nhất từ Google Sheet!");
+          setSyncNotice("Đã đồng bộ dữ liệu mới nhất");
           setTimeout(() => setSyncNotice(""), 3500);
         }
       } catch (err) {

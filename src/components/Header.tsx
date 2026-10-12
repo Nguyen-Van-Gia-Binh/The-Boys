@@ -64,14 +64,6 @@ export default function Header() {
           <a href="#contact" className="transition hover:text-[#df8143]">
             Liên hệ
           </a>
-          <button
-            type="button"
-            onClick={() => setIsOrdersDrawerOpen(true)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#315444]/10 text-[#315444] dark:text-[#a8bf9e] hover:bg-[#315444]/20 font-semibold transition"
-          >
-            <Package className="size-3.5" />
-            <span>{customerPhone ? `Đơn của tôi (${customerPhone.slice(-4)})` : "Đơn của tôi"}</span>
-          </button>
         </nav>
 
         {/* Action Buttons */}

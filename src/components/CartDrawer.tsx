@@ -220,8 +220,16 @@ export default function CartDrawer() {
       {/* Slide-over Drawer Panel */}
       <div className="relative flex h-full w-full max-w-md flex-col bg-[var(--brand-surface)] shadow-2xl overflow-y-auto">
         {/* Drawer Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--brand-border)] bg-[var(--brand-surface)]/95 px-6 py-4 backdrop-blur-md">
-          <h2 className="text-2xl font-bold text-[var(--brand-heading)]">Giỏ hàng</h2>
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--brand-border)] bg-[var(--brand-surface)]/95 px-5 py-4 backdrop-blur-md">
+          <div className="flex items-center gap-2.5">
+            <span className="flex size-9 items-center justify-center rounded-xl bg-[#315444]/15 text-[#315444] dark:text-[#a8bf9e]">
+              <ShoppingBag className="size-5" />
+            </span>
+            <div>
+              <h2 className="text-lg font-bold text-[var(--brand-heading)]">Giỏ hàng & Thanh toán</h2>
+              <p className="text-[11px] text-[var(--brand-muted)]">{items.reduce((s, it) => s + it.quantity, 0)} món được chọn</p>
+            </div>
+          </div>
           <button
             onClick={() => setIsCartOpen(false)}
             className="flex size-9 items-center justify-center rounded-full text-[var(--brand-muted)] hover:bg-[var(--brand-surface-alt)] hover:text-[var(--brand-heading)] transition"
@@ -231,46 +239,9 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {/* Tab Switcher: Giỏ hàng | Đơn đã đặt */}
-        <div className="p-4 bg-[var(--brand-surface-alt)] border-b border-[var(--brand-border)]">
-          <div className="grid grid-cols-2 rounded-2xl bg-[var(--brand-border)]/40 p-1 text-sm font-semibold">
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab("cart");
-                setSuccessOrder(null);
-              }}
-              className={`rounded-xl py-2 transition ${
-                activeTab === "cart"
-                  ? "bg-[var(--brand-surface)] text-[var(--brand-heading)] shadow-sm"
-                  : "text-[var(--brand-muted)] hover:text-[var(--brand-heading)]"
-              }`}
-            >
-              Giỏ hàng ({items.reduce((s, it) => s + it.quantity, 0)})
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setActiveTab("orders");
-                setSuccessOrder(null);
-              }}
-              className={`rounded-xl py-2 transition ${
-                activeTab === "orders"
-                  ? "bg-[var(--brand-surface)] text-[var(--brand-heading)] shadow-sm"
-                  : "text-[var(--brand-muted)] hover:text-[var(--brand-heading)]"
-              }`}
-            >
-              Đơn đã đặt ({pastOrders.length})
-            </button>
-          </div>
-        </div>
-
         {/* Content Section */}
         <div className="flex-1 p-5 sm:p-6">
-          {/* TAB 1: GIỎ HÀNG */}
-          {activeTab === "cart" && (
-            <>
-              {/* Nếu đặt hàng thành công */}
+          {/* Nếu đặt hàng thành công */}
               {successOrder ? (
                 <div className="flex flex-col items-center justify-center text-center py-10">
                   <div className="flex size-16 items-center justify-center rounded-full bg-[#315444]/15 text-[#315444] mb-4">
@@ -1009,76 +980,23 @@ export default function CartDrawer() {
                         {isSubmitting ? "Đang gửi đơn hàng..." : "Xác nhận đặt hàng"}
                       </button>
                     </div>
+
+                    {/* Link phụ chuyển sang Đơn của tôi */}
+                    <div className="pt-3 text-center border-t border-[var(--brand-border)]">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsCartOpen(false);
+                          setIsOrdersDrawerOpen(true);
+                        }}
+                        className="text-xs text-[var(--brand-muted)] hover:text-[#df8143] font-medium transition"
+                      >
+                        Bạn muốn kiểm tra đơn đã đặt trước đó? <span className="underline font-bold text-[#315444] dark:text-[#a8bf9e]">Xem Đơn của tôi →</span>
+                      </button>
+                    </div>
                   </form>
                 </div>
               )}
-            </>
-          )}
-
-          {/* TAB 2: ĐƠN ĐÃ ĐẶT */}
-          {activeTab === "orders" && (
-            <div>
-              {pastOrders.length === 0 ? (
-                <div className="flex flex-col items-center justify-center text-center py-16">
-                  <div className="flex size-14 items-center justify-center rounded-full bg-[var(--brand-surface-alt)] text-[var(--brand-muted)] mb-3">
-                    <ShoppingBag className="size-6" />
-                  </div>
-                  <p className="text-sm font-bold text-[var(--brand-heading)]">Bạn chưa có đơn hàng nào</p>
-                  <p className="mt-1 text-xs text-[var(--brand-muted)]">
-                    Các đơn bạn đặt trên trình duyệt này sẽ được lưu tại đây để tiện theo dõi.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-xs text-[var(--brand-muted)] font-medium">
-                    Danh sách đơn hàng bạn đã đặt trên thiết bị này:
-                  </p>
-                  {pastOrders.map((ord, idx) => (
-                    <div
-                      key={idx}
-                      className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-xs space-y-2 shadow-sm"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#df8143] text-sm">{ord.id}</span>
-                        <span className="rounded-full bg-[#315444]/15 px-2 py-0.5 text-[10px] font-bold text-[#315444]">
-                          Đã tiếp nhận
-                        </span>
-                      </div>
-                      <p className="text-[var(--brand-muted)]">Thời gian: {ord.createdAt}</p>
-                      <div className="border-t border-[var(--brand-border)] pt-2 space-y-1">
-                        {ord.items.map((it, i) => (
-                          <div key={i} className="flex justify-between">
-                            <span>{it.quantity}x {it.productName} {it.sizeName ? `(${it.sizeName})` : ""}</span>
-                            <span className="font-semibold">{it.subtotal.toLocaleString("vi-VN")}đ</span>
-                          </div>
-                        ))}
-                      </div>
-                      {ord.giftSummary && (
-                        <div className="rounded-lg bg-[#df8143]/15 px-2.5 py-1 text-[11px] font-bold text-[#b93815] dark:text-[#f39c5b] flex items-center gap-1.5">
-                          <Gift className="size-3.5 shrink-0 text-[#df8143]" />
-                          <span>Quà tặng kèm: {ord.giftSummary}</span>
-                        </div>
-                      )}
-                      <div className="border-t border-[var(--brand-border)] pt-2 flex justify-between font-bold text-sm">
-                        <span>Tổng tiền:</span>
-                        <span className="text-[#df8143]">{ord.total.toLocaleString("vi-VN")}đ</span>
-                      </div>
-                      {ord.isMixedOrder ? (
-                        <div className="space-y-1 text-[11px] text-[var(--brand-muted)] border-t border-[var(--brand-border)] pt-2">
-                          <div>🍱 <strong>Đồ ăn/uống:</strong> {ord.pickupDate} ({ord.pickupTime}) tại {ord.pickupLocation}</div>
-                          <div>🌸 <strong>Hoa/Combo:</strong> {ord.flowerPickupDate || "17/10/2026"} ({ord.flowerPickupTime || "Từ 08:00 sáng"}) tại {ord.flowerPickupLocation || "Sảnh Gương (Workshop)"}</div>
-                        </div>
-                      ) : (
-                        <div className="text-[11px] text-[var(--brand-muted)]">
-                          Nhận ngày {ord.pickupDate} ({ord.pickupTime}) tại {ord.pickupLocation}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </div>
