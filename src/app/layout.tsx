@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ZaloButton from "@/components/ZaloButton";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   title: "Dòng Nước Về Nguồn — Trao yêu thương, tri ân anh hùng",
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen">
         {children}
         <ZaloButton />
+        <Analytics />
       </body>
     </html>
   );
