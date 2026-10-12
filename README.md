@@ -2,7 +2,24 @@
 
 <div align="center">
 
----
+# 🌾 Dòng Nước Về Nguồn
+
+### *Góp nắng gửi yêu thương, tri ân ngàn người lính*
+
+[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-dongnuocvenguon.vercel.app-315444?style=for-the-badge&labelColor=17241d)](https://dongnuocvenguon.vercel.app)
+[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=flat-square&logo=nextdotjs)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=flat-square&logo=vercel)](https://dongnuocvenguon.vercel.app)
+
+<br/>
+
+**Nền tảng e-commerce thiện nguyện** được xây dựng bởi nhóm sinh viên **The Boys Project** — Đại học FPT TP.HCM.
+Toàn bộ doanh thu sẽ được quy đổi thành **20 phần quà tri ân** gửi tặng các anh hùng thương binh nhiễm chất độc da cam.
+
+<br/>
+
+</div>
 
 ## 📋 Mục Lục
 
@@ -26,7 +43,7 @@
 | **Mục tiêu gây quỹ** | 3.000.000đ → 20 phần quà tri ân thương binh                      |
 | **Ngày mở bán**       | 13/10/2026                                                              |
 | **Ngày Workshop**       | 17/10/2026                                                              |
-| **Website**              | [the-boys-sable-nine.vercel.app](https://the-boys-sable-nine.vercel.app) |
+| **Website**              | [dongnuocvenguon.vercel.app](https://dongnuocvenguon.vercel.app) |
 | **Liên hệ hỗ trợ**   | Zalo:[0916 532 006](https://zalo.me/0916532006)                          |
 
 ### 💝 Mỗi Phần Quà Tri Ân Bao Gồm
@@ -246,7 +263,7 @@ Hoặc deploy qua CLI:
 npx vercel --prod
 ```
 
-**Production URL**: [`https://the-boys-sable-nine.vercel.app`](https://the-boys-sable-nine.vercel.app)
+**Production URL**: [`https://dongnuocvenguon.vercel.app`](https://dongnuocvenguon.vercel.app)
 
 ---
 
@@ -254,6 +271,21 @@ npx vercel --prod
 
 <div align="center">
 
+### Nguyễn Văn Gia Bình
+
+**Full-Stack Developer** · Sinh viên Đại học FPT TP.HCM
+
+[![GitHub](https://img.shields.io/badge/GitHub-Nguyen--Van--Gia--Binh-181717?style=for-the-badge&logo=github)](https://github.com/Nguyen-Van-Gia-Binh)
+[![Email](https://img.shields.io/badge/Email-nguyenvangiabinh22072006@gmail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:nguyenvangiabinh22072006@gmail.com)
+
+</div>
+
 ---
 
 <div align="center">
+
+*Dự án được xây dựng với ❤️ vì cộng đồng*
+
+**The Boys Project** · ĐH FPT TP.HCM · 2026
+
+</div>
