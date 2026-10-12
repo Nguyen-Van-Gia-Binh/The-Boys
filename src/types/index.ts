@@ -72,3 +72,17 @@ export interface OrderPayload extends OrderFormData {
   total: number;
   createdAt: string;
 }
+
+export interface OrderResult {
+  orderId: string;
+  customerName: string;
+  phone: string;
+  status: string;
+  createdAt: string;
+  pickupDate: string;
+  pickupTime: string;
+  pickupLocation: string;
+  items?: string;
+  total: number;
+  paymentMethod: string;
+}

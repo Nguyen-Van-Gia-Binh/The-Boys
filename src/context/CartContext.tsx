@@ -25,6 +25,10 @@ interface CartContextType {
   voucherBenefit: ReturnType<typeof calculateVoucherBenefit>;
   pastOrders: OrderPayload[];
   addPastOrder: (order: OrderPayload) => void;
+  customerPhone: string;
+  setCustomerPhone: (phone: string) => void;
+  isOrdersDrawerOpen: boolean;
+  setIsOrdersDrawerOpen: (open: boolean) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -34,6 +38,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"cart" | "orders">("cart");
   const [pastOrders, setPastOrders] = useState<OrderPayload[]>([]);
+  const [customerPhone, setCustomerPhoneState] = useState<string>("");
+  const [isOrdersDrawerOpen, setIsOrdersDrawerOpen] = useState(false);
+
+  const setCustomerPhone = (phone: string) => {
+    const clean = phone.trim();
+    setCustomerPhoneState(clean);
+    if (clean) {
+      localStorage.setItem("theboys_customer_phone", clean);
+    } else {
+      localStorage.removeItem("theboys_customer_phone");
+    }
+  };
   const [toast, setToast] = useState<{
     id: number;
     title: string;
@@ -57,6 +73,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       const savedOrders = localStorage.getItem("theboys_orders");
       if (savedOrders) setPastOrders(JSON.parse(savedOrders));
+
+      const savedPhone = localStorage.getItem("theboys_customer_phone");
+      if (savedPhone) setCustomerPhoneState(savedPhone);
     } catch {
       // Ignore JSON error
     }
@@ -191,6 +210,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         voucherBenefit,
         pastOrders,
         addPastOrder,
+        customerPhone,
+        setCustomerPhone,
+        isOrdersDrawerOpen,
+        setIsOrdersDrawerOpen,
       }}
     >
       {children}

@@ -8,6 +8,7 @@ import ShopSection from "@/components/ShopSection";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
+import CustomerOrdersDrawer from "@/components/CustomerOrdersDrawer";
 
 export default function Home() {
   return (
@@ -28,6 +29,9 @@ export default function Home() {
 
         {/* Cart & Checkout Slide-over Drawer */}
         <CartDrawer />
+
+        {/* Customer Orders Slide-over Drawer */}
+        <CustomerOrdersDrawer />
       </div>
     </CartProvider>
   );

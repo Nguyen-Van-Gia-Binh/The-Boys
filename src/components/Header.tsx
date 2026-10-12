@@ -2,11 +2,16 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Sun, Moon, ShoppingBag, Menu, X, Heart, Search } from "lucide-react";
+import { Sun, Moon, ShoppingBag, Menu, X, Heart, Search, User, Package } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function Header() {
-  const { totalQuantity, setIsCartOpen } = useCart();
+  const {
+    totalQuantity,
+    setIsCartOpen,
+    customerPhone,
+    setIsOrdersDrawerOpen,
+  } = useCart();
   const [isDark, setIsDark] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -46,7 +51,7 @@ export default function Header() {
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[var(--brand-muted)]">
+        <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--brand-muted)]">
           <a href="#about" className="transition hover:text-[#df8143]">
             Về dự án
           </a>
@@ -59,10 +64,14 @@ export default function Header() {
           <a href="#contact" className="transition hover:text-[#df8143]">
             Liên hệ
           </a>
-          <Link href="/tra-cuu" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#315444]/10 text-[#315444] hover:bg-[#315444]/20 font-semibold transition">
-            <Search className="size-3.5" />
-            Tra cứu đơn
-          </Link>
+          <button
+            type="button"
+            onClick={() => setIsOrdersDrawerOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#315444]/10 text-[#315444] dark:text-[#a8bf9e] hover:bg-[#315444]/20 font-semibold transition"
+          >
+            <Package className="size-3.5" />
+            <span>{customerPhone ? `Đơn của tôi (${customerPhone.slice(-4)})` : "Đơn của tôi"}</span>
+          </button>
         </nav>
 
         {/* Action Buttons */}
@@ -75,6 +84,22 @@ export default function Header() {
             title={isDark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối"}
           >
             {isDark ? <Sun className="size-4 text-[#e6b057]" /> : <Moon className="size-4 text-[#315444]" />}
+          </button>
+
+          {/* User / My Orders Button (Hiện cả Mobile và Desktop) */}
+          <button
+            onClick={() => setIsOrdersDrawerOpen(true)}
+            className="relative flex h-10 items-center gap-1.5 rounded-full border border-[var(--brand-border)] bg-[var(--brand-surface)] px-2.5 sm:px-3.5 text-xs sm:text-sm font-semibold text-[var(--brand-heading)] hover:bg-[var(--brand-surface-alt)] shadow-sm active:scale-95 transition"
+            aria-label="Đơn hàng của tôi"
+            title="Đơn hàng của tôi"
+          >
+            <User className="size-4 text-[#315444] dark:text-[#a8bf9e]" />
+            <span className="hidden sm:inline">
+              {customerPhone ? "Đơn của tôi" : "Đăng nhập"}
+            </span>
+            {customerPhone && (
+              <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" title="Đã lưu SĐT" />
+            )}
           </button>
 
           {/* Cart Button */}
@@ -105,7 +130,25 @@ export default function Header() {
 
       {/* Mobile Nav dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-[var(--brand-border)] bg-[var(--brand-surface)] px-4 py-4 space-y-2">
+        <div className="md:hidden border-t border-[var(--brand-border)] bg-[var(--brand-surface)] px-4 py-4 space-y-2.5 animate-in slide-in-from-top-2 duration-200">
+          {/* Nút Đơn hàng của tôi nổi bật trên mobile menu */}
+          <button
+            type="button"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setIsOrdersDrawerOpen(true);
+            }}
+            className="w-full flex items-center justify-between rounded-xl p-3 text-sm font-bold text-[#315444] dark:text-[#a8bf9e] bg-[#315444]/10 hover:bg-[#315444]/20 transition"
+          >
+            <span className="flex items-center gap-2">
+              <Package className="size-4 text-[#df8143]" />
+              <span>Đơn hàng của tôi {customerPhone ? `(${customerPhone})` : ""}</span>
+            </span>
+            <span className="text-xs bg-[#315444] text-white px-2.5 py-1 rounded-full font-semibold">
+              Xem ngay
+            </span>
+          </button>
+
           <a
             href="#about"
             onClick={() => setMobileMenuOpen(false)}
@@ -134,6 +177,15 @@ export default function Header() {
           >
             Liên hệ nhóm
           </a>
+
+          <Link
+            href="/tra-cuu"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-[var(--brand-muted)] hover:bg-[var(--brand-surface-alt)] border-t border-[var(--brand-border)] pt-3"
+          >
+            <Search className="size-4" />
+            <span>Trang tra cứu đơn hàng chi tiết</span>
+          </Link>
         </div>
       )}
     </header>

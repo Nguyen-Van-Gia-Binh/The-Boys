@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, Loader2, Phone, Hash, Info, MessageCircle } from "lucide-react";
 
 interface OrderResult {
@@ -25,9 +25,26 @@ export default function OrderLookup() {
   const [orders, setOrders] = useState<OrderResult[]>([]);
   const [searched, setSearched] = useState(false);
 
+  useEffect(() => {
+    try {
+      const savedPhone = localStorage.getItem("theboys_customer_phone");
+      if (savedPhone) {
+        setSearchType("phone");
+        setInputValue(savedPhone);
+      }
+    } catch {}
+  }, []);
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
+
+    // Lưu lại SĐT nếu tìm theo SĐT để tiện lần sau
+    if (searchType === "phone") {
+      try {
+        localStorage.setItem("theboys_customer_phone", inputValue.trim());
+      } catch {}
+    }
 
     setIsLoading(true);
     setError("");

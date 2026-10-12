@@ -25,6 +25,9 @@ export default function CartDrawer() {
     voucherBenefit,
     pastOrders,
     addPastOrder,
+    customerPhone,
+    setCustomerPhone,
+    setIsOrdersDrawerOpen,
   } = useCart();
 
   // Phân loại nhóm món trong giỏ:
@@ -55,6 +58,13 @@ export default function CartDrawer() {
     isMixedOrder: false,
     paymentMethod: "bank_transfer",
   });
+
+  // Tự động điền SĐT nếu khách đã đăng nhập trước đó
+  useEffect(() => {
+    if (customerPhone && !formData.phone) {
+      setFormData((prev) => ({ ...prev, phone: customerPhone }));
+    }
+  }, [customerPhone]);
 
   // Tự động đồng bộ và tinh chỉnh thông tin nhận hàng theo từng nhóm đơn:
   useEffect(() => {
@@ -179,6 +189,9 @@ export default function CartDrawer() {
         };
         addPastOrder(confirmedOrder);
         setSuccessOrder(confirmedOrder);
+        if (payload.phone) {
+          setCustomerPhone(payload.phone);
+        }
         clearCart();
         setOrderCode(`DH${Math.floor(1000 + Math.random() * 9000)}`);
       } else {
@@ -380,10 +393,13 @@ export default function CartDrawer() {
                   </p>
                   <div className="mt-6 flex flex-col gap-2.5 w-full">
                     <button
-                      onClick={() => setActiveTab("orders")}
-                      className="w-full rounded-xl bg-[#315444] py-3 text-sm font-semibold text-white hover:bg-[#243e33] transition"
+                      onClick={() => {
+                        setIsCartOpen(false);
+                        setIsOrdersDrawerOpen(true);
+                      }}
+                      className="w-full rounded-xl bg-[#315444] py-3 text-sm font-semibold text-white hover:bg-[#243e33] transition shadow-md"
                     >
-                      Xem đơn đã đặt
+                      Xem đơn đã đặt (Cập nhật thời gian thực)
                     </button>
                     <button
                       onClick={() => {
