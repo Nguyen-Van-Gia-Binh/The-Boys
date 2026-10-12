@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Sun, Moon, ShoppingBag, Menu, X, Heart } from "lucide-react";
+import Link from "next/link";
+import { Sun, Moon, ShoppingBag, Menu, X, Heart, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function Header() {
@@ -58,6 +59,10 @@ export default function Header() {
           <a href="#contact" className="transition hover:text-[#df8143]">
             Liên hệ
           </a>
+          <Link href="/tra-cuu" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#315444]/10 text-[#315444] hover:bg-[#315444]/20 font-semibold transition">
+            <Search className="size-3.5" />
+            Tra cứu đơn
+          </Link>
         </nav>
 
         {/* Action Buttons */}

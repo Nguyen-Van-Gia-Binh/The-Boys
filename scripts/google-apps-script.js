@@ -31,6 +31,10 @@
  * 💡 MẸO QUẢN LÝ ĐƠN HÀNG DỄ DÀNG TRÊN GOOGLE SHEET:
  * - Khi khách quét mã QR VietQR, trong nội dung chuyển khoản SHB sẽ có mã: "THEBOYS DHxxxx".
  * - Bạn chỉ cần nhìn mã DHxxxx trên thông báo tài khoản SHB, tra dòng tương ứng trên Sheet và đổi cột P (Trạng thái) thành "Đã thanh toán".
+ *
+ * 🔍 TÍNH NĂNG TRA CỨU ĐƠN HÀNG:
+ * - Sau khi update code này, khách có thể truy cập /tra-cuu trên website để xem trạng thái đơn.
+ * - Deploy lại (Deploy -> Manage deployments -> Edit -> New version) sau khi cập nhật code.
  * =========================================================================
  */
 
@@ -99,6 +103,90 @@ function doPost(e) {
 }
 
 function doGet(e) {
+  var action = e.parameter.action;
+
+  // Action: lookup - Tìm đơn hàng theo mã hoặc SĐT
+  if (action === "lookup") {
+    var orderId = (e.parameter.orderId || "").trim().toUpperCase();
+    var phone = (e.parameter.phone || "").trim();
+
+    if (!orderId && !phone) {
+      return responseJson({ success: false, message: "Cần cung cấp orderId hoặc phone" });
+    }
+
+    // Luôn lấy Sheet đầu tiên (hoặc sheet đang active nếu có dữ liệu)
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheets()[0];
+    var data = sheet.getDataRange().getValues();
+    if (!data || data.length < 2) {
+      return responseJson({ success: true, count: 0, orders: [] });
+    }
+
+    var headers = data[0];
+
+    // Helper tìm cột linh hoạt theo nhiều tên gọi hoặc theo vị trí mặc định
+    function findCol(names, defaultIndex) {
+      for (var i = 0; i < headers.length; i++) {
+        var h = String(headers[i] || "").trim().toLowerCase();
+        for (var j = 0; j < names.length; j++) {
+          if (h === names[j].toLowerCase()) return i;
+        }
+      }
+      return defaultIndex;
+    }
+
+    var orderIdCol = findCol(["Mã đơn", "Mã đơn hàng", "Mã đơn #", "Order ID"], 0);
+    var dateCol = findCol(["Thời gian", "Thời gian đặt", "Ngày đặt"], 1);
+    var nameCol = findCol(["Họ tên", "Họ và tên", "Khách hàng", "Name"], 2);
+    var phoneCol = findCol(["SĐT", "Số điện thoại", "Số ĐT", "Phone"], 3);
+    var pickupDateCol = findCol(["Ngày nhận", "Pickup Date"], 5);
+    var pickupTimeCol = findCol(["Khung giờ", "Khung giờ nhận", "Giờ nhận"], 6);
+    var pickupLocCol = findCol(["Địa điểm", "Địa điểm nhận", "Nơi nhận"], 7);
+    var itemsCol = findCol(["Món đặt", "Sản phẩm", "Items"], 9);
+    var totalCol = findCol(["Tổng thanh toán", "Tổng tiền", "Thành tiền", "Total"], 12);
+    var paymentCol = findCol(["Phương thức", "Phương thức thanh toán", "Payment"], 13);
+    var statusCol = findCol(["Trạng thái", "Status", "Tình trạng"], 15);
+
+    var results = [];
+
+    // Duyệt từng dòng (bắt đầu từ row 2)
+    for (var i = 1; i < data.length; i++) {
+      var rowOrderId = String(data[i][orderIdCol] || "").trim().toUpperCase();
+      var rawPhone = String(data[i][phoneCol] || "");
+      var cleanPhone = rawPhone.replace(/[^\d]/g, "");
+
+      var match = false;
+      if (orderId && rowOrderId === orderId) match = true;
+      if (phone) {
+        var cleanQueryPhone = phone.replace(/[^\d]/g, "");
+        if (cleanPhone === cleanQueryPhone || cleanPhone.endsWith(cleanQueryPhone)) match = true;
+      }
+
+      if (match) {
+        results.push({
+          orderId: rowOrderId,
+          customerName: data[i][nameCol] || "",
+          phone: rawPhone.replace(/^'/, ""),
+          status: data[i][statusCol] || "Chờ xử lý",
+          createdAt: data[i][dateCol] || "",
+          pickupDate: data[i][pickupDateCol] || "",
+          pickupTime: data[i][pickupTimeCol] || "",
+          pickupLocation: data[i][pickupLocCol] || "",
+          items: data[i][itemsCol] || "",
+          total: data[i][totalCol] || 0,
+          paymentMethod: data[i][paymentCol] || ""
+        });
+      }
+    }
+
+    return responseJson({
+      success: true,
+      count: results.length,
+      orders: results
+    });
+  }
+
+  // Default: Health check
   return responseJson({
     status: "active",
     campaign: "Hành Trình Dòng Nước Về Nguồn - The Boys",
