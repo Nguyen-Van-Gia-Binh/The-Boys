@@ -10,37 +10,42 @@ const DEFAULT_WEBHOOK_URL =
 // Danh sách voucher rỗng, phụ thuộc 100% vào Google Sheet tab Vouchers
 const FALLBACK_VOUCHERS: Voucher[] = [];
 
-async function fetchVouchersFromSheet(): Promise<Voucher[]> {
-  const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || DEFAULT_WEBHOOK_URL;
-  if (!webhookUrl || !webhookUrl.startsWith("http")) {
-    return FALLBACK_VOUCHERS;
-  }
+async function fetchVouchersFromSheet(): Promise<{ vouchers: Voucher[]; isError: boolean }> {
+  const candidateUrls = [
+    process.env.GOOGLE_SHEET_WEBHOOK_URL,
+    DEFAULT_WEBHOOK_URL,
+  ].filter((url): url is string => !!url && url.startsWith("http"));
 
-  try {
-    const url = new URL(webhookUrl);
-    url.searchParams.set("action", "vouchers");
-    url.searchParams.set("_t", Date.now().toString());
+  // Loại bỏ các URL trùng lặp
+  const uniqueUrls = Array.from(new Set(candidateUrls));
 
-    const res = await fetch(url.toString(), {
-      method: "GET",
-      cache: "no-store",
-      next: { revalidate: 0 },
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  for (const webhookUrl of uniqueUrls) {
+    try {
+      const url = new URL(webhookUrl);
+      url.searchParams.set("action", "vouchers");
+      url.searchParams.set("_t", Date.now().toString());
 
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success && Array.isArray(data.vouchers) && data.vouchers.length > 0) {
-        return data.vouchers;
+      const res = await fetch(url.toString(), {
+        method: "GET",
+        cache: "no-store",
+        next: { revalidate: 0 },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.vouchers)) {
+          return { vouchers: data.vouchers, isError: false };
+        }
       }
+    } catch (err) {
+      console.warn(`Không thể fetch vouchers từ ${webhookUrl}:`, err);
     }
-  } catch (err) {
-    console.warn("Không thể fetch vouchers từ Google Sheet, sử dụng danh sách fallback:", err);
   }
 
-  return FALLBACK_VOUCHERS;
+  return { vouchers: [], isError: true };
 }
 
 export async function POST(req: NextRequest) {
@@ -65,7 +70,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const vouchers = await fetchVouchersFromSheet();
+    const { vouchers, isError } = await fetchVouchersFromSheet();
+
+    // Nếu không kết nối được Google Sheet
+    if (isError) {
+      return NextResponse.json({
+        valid: false,
+        message: "Chưa thể kết nối tới Google Sheet để kiểm tra mã. Vui lòng thử lại sau giây lát!",
+      });
+    }
+
     const voucher = vouchers.find(
       (v) => (v.code || "").trim().toUpperCase() === rawCode
     );

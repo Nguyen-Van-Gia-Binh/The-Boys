@@ -153,7 +153,7 @@ export default function DonationCertificateModal({
       ctx.textAlign = "left";
       ctx.fillText(`Mã chứng nhận: ${data.id}`, 90, 640);
       ctx.fillText(`Ngày ghi nhận: ${data.createdAt || new Date().toLocaleDateString("vi-VN")}`, 90, 665);
-      ctx.fillText(`Tra cứu tại: theboys-project.vercel.app/tra-cuu`, 90, 690);
+      ctx.fillText(`Tra cứu tại: dongnuocvenguon.vercel.app/tra-cuu`, 90, 690);
 
       // Dấu chứng nhận bên phải
       ctx.textAlign = "right";
