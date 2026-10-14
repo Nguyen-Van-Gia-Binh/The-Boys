@@ -24,7 +24,10 @@ export async function GET(req: NextRequest) {
 
     const DEFAULT_WEBHOOK_URL =
       "https://script.google.com/macros/s/AKfycbwMOKiNhJUi7Sk7nLZ1eojXbH0flQOXsdkkuLADdU0jHcXXQduvyEdwMjJWrOrEJQ-5/exec";
-    const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || DEFAULT_WEBHOOK_URL;
+    const OLD_STALE_SCRIPT_ID =
+      "AKfycbxow8CaEHHnC_o5KD3kYsM4KWXfWcr9spcp_otCyKZeGTccUFOKGOWi-xEMOhJMjtP2";
+    const envUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL;
+    const webhookUrl = envUrl && !envUrl.includes(OLD_STALE_SCRIPT_ID) ? envUrl : DEFAULT_WEBHOOK_URL;
 
     // Build query URL cho Google Apps Script với cache-busting timestamp
     const scriptUrl = new URL(webhookUrl);
