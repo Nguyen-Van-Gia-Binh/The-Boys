@@ -171,9 +171,14 @@ export async function POST(req: NextRequest) {
       eligibleAmount = matchingSubtotal;
     }
 
-    // 5. Tính toán số tiền giảm
+    // 5. Tính toán số tiền giảm (chuẩn hóa nếu Google Sheet lưu kiểu 10% = 0.1)
+    let normalizedPercent = Number(voucher.discountPercent) || 0;
+    if (normalizedPercent > 0 && normalizedPercent <= 1) {
+      normalizedPercent = Math.round(normalizedPercent * 100);
+    }
+
     let discountAmount = Math.round(
-      eligibleAmount * (Number(voucher.discountPercent) / 100)
+      eligibleAmount * (normalizedPercent / 100)
     );
 
     // Áp trần giảm giá tối đa nếu có
@@ -186,16 +191,21 @@ export async function POST(req: NextRequest) {
 
     const finalTotal = Math.max(0, subtotal - discountAmount);
 
+    let cleanDesc = voucher.description || `Giảm ${normalizedPercent}%`;
+    if (cleanDesc.includes("Giảm 0.")) {
+      cleanDesc = cleanDesc.replace(/Giảm 0\.\d+%?/, `Giảm ${normalizedPercent}%`);
+    }
+
     return NextResponse.json({
       success: true,
       valid: true,
       voucherCode: voucher.code,
-      discountPercent: voucher.discountPercent,
+      discountPercent: normalizedPercent,
       maxDiscount: voucher.maxDiscount || 0,
       minSpend: voucher.minSpend || 0,
       applicableCategory: voucher.applicableCategory || "all",
       discountAmount,
-      description: voucher.description,
+      description: cleanDesc,
       finalTotal,
       message: `Đã áp dụng mã ${voucher.code}: giảm ${discountAmount.toLocaleString("vi-VN")}đ!`,
     });
