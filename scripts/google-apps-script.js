@@ -57,6 +57,24 @@ function safeNumber(val) {
   return Number(str) || 0;
 }
 
+// Helper chuẩn hóa hiển thị ngày ngắn gọn (dd/MM/yyyy)
+function formatShortDate(val) {
+  if (!val) return "14/10/2026";
+  if (val instanceof Date) {
+    return Utilities.formatDate(val, "GMT+7", "dd/MM/yyyy");
+  }
+  var str = String(val).trim();
+  var match = str.match(/\d{1,2}\/\d{1,2}\/\d{4}/);
+  if (match) return match[0];
+  var parts = str.split(" ");
+  for (var p = 0; p < parts.length; p++) {
+    if (parts[p].indexOf("/") !== -1 || parts[p].indexOf("-") !== -1) {
+      return parts[p];
+    }
+  }
+  return str.split(" ")[0] || "14/10/2026";
+}
+
 // =========================================================================
 // 1. TỰ ĐỘNG TẠO & ĐỊNH DẠNG TAB 1: "Đơn hàng" (16 Cột)
 // =========================================================================
@@ -498,7 +516,7 @@ function doGet(e) {
         var isAnon = String(dData[i][dAnonCol] || "").trim().toUpperCase() === "TRUE";
         var cleanName = isAnon ? "Nhà hảo tâm giấu tên" : (String(dData[i][dNameCol] || "Nhà hảo tâm giấu tên").trim());
         var cleanNote = String(dData[i][dNoteCol] || "Gửi gắm yêu thương tri ân các anh hùng thời bình ❤️").trim();
-        var rawDate = String(dData[i][dDateCol] || "").split(" ")[0] || "14/10/2026";
+        var rawDate = formatShortDate(dData[i][dDateCol]);
         var rowStatus = String(dData[i][dStatusCol] || "Đã ghi nhận").trim();
 
         list.push({
@@ -538,7 +556,7 @@ function doGet(e) {
               name: String(lData[j][lNameCol] || "Nhà hảo tâm giấu tên").replace(/^\[DONATION\]\s*/i, "").trim(),
               amount: legTotal,
               message: String(lData[j][lNoteCol] || "").replace(/^\[LỜI CHÚC TRI ÂN\]:\s*"?/i, "").replace(/"$/, "").trim(),
-              createdAt: String(lData[j][lDateCol] || "").split(" ")[0] || "14/10/2026",
+              createdAt: formatShortDate(lData[j][lDateCol]),
               status: String(lData[j][lStatusCol] || "Đã ghi nhận")
             });
           }
