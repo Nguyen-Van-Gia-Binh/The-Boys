@@ -37,7 +37,8 @@ export async function POST(req: NextRequest) {
 
     const initialStatus = "Chờ chuyển khoản (VietQR)";
 
-    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxow8CaEHHnC_o5KD3kYsM4KWXfWcr9spcp_otCyKZeGTccUFOKGOWi-xEMOhJMjtP2/exec";
+    const DEFAULT_WEBHOOK_URL =
+      "https://script.google.com/macros/s/AKfycbwMOKiNhJUi7Sk7nLZ1eojXbH0flQOXsdkkuLADdU0jHcXXQduvyEdwMjJWrOrEJQ-5/exec";
     const webhookUrl = process.env.GOOGLE_SHEET_WEBHOOK_URL || DEFAULT_WEBHOOK_URL;
     let sheetSynced = false;
 
