@@ -1,7 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, Loader2, Phone, Hash, Info, MessageCircle } from "lucide-react";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Search,
+  Package,
+  CheckCircle2,
+  Clock,
+  XCircle,
+  AlertCircle,
+  Loader2,
+  Phone,
+  Hash,
+  Info,
+  MessageCircle,
+  Heart,
+  Award,
+  Sparkles,
+} from "lucide-react";
+import DonationCertificateModal, {
+  DonationCertificateData,
+} from "./DonationCertificateModal";
 
 interface OrderResult {
   orderId: string;
@@ -15,6 +33,8 @@ interface OrderResult {
   items?: string;
   total: number;
   paymentMethod: string;
+  note?: string;
+  isDonation?: boolean;
 }
 
 export default function OrderLookup() {
@@ -24,68 +44,100 @@ export default function OrderLookup() {
   const [error, setError] = useState("");
   const [orders, setOrders] = useState<OrderResult[]>([]);
   const [searched, setSearched] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] =
+    useState<DonationCertificateData | null>(null);
+
+  const performSearch = useCallback(
+    async (queryVal: string, type: "orderId" | "phone") => {
+      const cleanVal = queryVal.trim();
+      if (!cleanVal) return;
+
+      if (type === "phone") {
+        try {
+          localStorage.setItem("theboys_customer_phone", cleanVal);
+        } catch {}
+      }
+
+      setIsLoading(true);
+      setError("");
+      setOrders([]);
+      setSearched(false);
+
+      try {
+        const params = new URLSearchParams();
+        if (type === "orderId") {
+          params.set("orderId", cleanVal.toUpperCase());
+        } else {
+          params.set("phone", cleanVal);
+        }
+
+        params.set("_t", Date.now().toString());
+        const res = await fetch(`/api/orders/lookup?${params.toString()}`, {
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+          },
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          setError(data.message || "Không thể tra cứu. Vui lòng thử lại.");
+          return;
+        }
+
+        setOrders(data.orders || []);
+        setSearched(true);
+      } catch {
+        setError("Lỗi kết nối. Vui lòng kiểm tra mạng và thử lại.");
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
-    try {
-      const savedPhone = localStorage.getItem("theboys_customer_phone");
-      if (savedPhone) {
-        setSearchType("phone");
-        setInputValue(savedPhone);
-      }
-    } catch {}
-  }, []);
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramOrderId = urlParams.get("orderId") || urlParams.get("code");
+      const paramPhone = urlParams.get("phone");
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputValue.trim()) return;
-
-    // Lưu lại SĐT nếu tìm theo SĐT để tiện lần sau
-    if (searchType === "phone") {
-      try {
-        localStorage.setItem("theboys_customer_phone", inputValue.trim());
-      } catch {}
-    }
-
-    setIsLoading(true);
-    setError("");
-    setOrders([]);
-    setSearched(false);
-
-    try {
-      const params = new URLSearchParams();
-      if (searchType === "orderId") {
-        params.set("orderId", inputValue.trim().toUpperCase());
-      } else {
-        params.set("phone", inputValue.trim());
-      }
-
-      params.set("_t", Date.now().toString());
-      const res = await fetch(`/api/orders/lookup?${params.toString()}`, {
-        cache: "no-store",
-        headers: {
-          "Cache-Control": "no-cache, no-store, must-revalidate",
-          Pragma: "no-cache",
-        },
-      });
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        setError(data.message || "Không thể tra cứu. Vui lòng thử lại.");
+      if (paramOrderId) {
+        setSearchType("orderId");
+        setInputValue(paramOrderId);
+        performSearch(paramOrderId, "orderId");
         return;
       }
 
-      setOrders(data.orders || []);
-      setSearched(true);
-    } catch {
-      setError("Lỗi kết nối. Vui lòng kiểm tra mạng và thử lại.");
-    } finally {
-      setIsLoading(false);
+      if (paramPhone) {
+        setSearchType("phone");
+        setInputValue(paramPhone);
+        performSearch(paramPhone, "phone");
+        return;
+      }
+
+      try {
+        const savedPhone = localStorage.getItem("theboys_customer_phone");
+        if (savedPhone) {
+          setSearchType("phone");
+          setInputValue(savedPhone);
+        }
+      } catch {}
     }
+  }, [performSearch]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    performSearch(inputValue, searchType);
   };
 
   const formatPickupDate = (dateStr: string) => {
     if (!dateStr) return "";
-    if (dateStr.includes("Đồ ăn:") || (dateStr.includes("/") && !dateStr.includes("T"))) {
+    if (
+      dateStr.includes("Đồ ăn:") ||
+      (dateStr.includes("/") && !dateStr.includes("T"))
+    ) {
       return dateStr;
     }
     try {
@@ -95,29 +147,37 @@ export default function OrderLookup() {
           timeZone: "Asia/Ho_Chi_Minh",
           day: "2-digit",
           month: "2-digit",
-          year: "numeric"
+          year: "numeric",
         });
       }
     } catch {}
     return dateStr;
   };
 
-  const getStatusDisplay = (status: string) => {
-    const lowerStatus = status.toLowerCase();
+  const getStatusDisplay = (status: string, isDonationOrder: boolean) => {
+    const lowerStatus = (status || "").toLowerCase();
 
-    if (lowerStatus.includes("đã thanh toán") || lowerStatus.includes("hoàn thành")) {
+    if (
+      lowerStatus.includes("đã thanh toán") ||
+      lowerStatus.includes("hoàn thành") ||
+      lowerStatus.includes("đã chuyển khoản") ||
+      lowerStatus.includes("đã ghi nhận") ||
+      lowerStatus.includes("đã xác nhận")
+    ) {
       return {
-        icon: <CheckCircle2 className="size-5 text-emerald-600" />,
-        bg: "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800",
-        text: "text-emerald-700 dark:text-emerald-400",
-        label: "Đã thanh toán",
+        icon: <CheckCircle2 className="size-4.5 text-emerald-600 dark:text-emerald-400" />,
+        bg: isDonationOrder
+          ? "bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent border-emerald-500/40"
+          : "bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800",
+        text: "text-emerald-700 dark:text-emerald-300",
+        label: isDonationOrder ? "Đã vào quỹ tri ân 🌟" : "Đã thanh toán",
         isPending: false,
       };
     }
 
     if (lowerStatus.includes("hủy") || lowerStatus.includes("bị từ chối")) {
       return {
-        icon: <XCircle className="size-5 text-red-500" />,
+        icon: <XCircle className="size-4.5 text-red-500" />,
         bg: "bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-red-800",
         text: "text-red-700 dark:text-red-400",
         label: "Đã hủy",
@@ -126,10 +186,12 @@ export default function OrderLookup() {
     }
 
     return {
-      icon: <Clock className="size-5 text-amber-500" />,
-      bg: "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800",
-      text: "text-amber-700 dark:text-amber-400",
-      label: status || "Chờ xử lý",
+      icon: <Clock className="size-4.5 text-amber-500" />,
+      bg: isDonationOrder
+        ? "bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border-amber-500/35"
+        : "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800",
+      text: "text-amber-700 dark:text-amber-300",
+      label: isDonationOrder ? "Chờ ngân hàng đối soát ⏳" : (status || "Chờ xử lý"),
       isPending: true,
     };
   };
@@ -142,7 +204,12 @@ export default function OrderLookup() {
         <div className="flex rounded-xl bg-[var(--brand-surface-alt)] p-1 border border-[var(--brand-border)]">
           <button
             type="button"
-            onClick={() => { setSearchType("orderId"); setInputValue(""); setOrders([]); setSearched(false); }}
+            onClick={() => {
+              setSearchType("orderId");
+              setInputValue("");
+              setOrders([]);
+              setSearched(false);
+            }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition ${
               searchType === "orderId"
                 ? "bg-[var(--brand-surface)] text-[var(--brand-heading)] shadow-sm"
@@ -150,11 +217,16 @@ export default function OrderLookup() {
             }`}
           >
             <Hash className="size-4" />
-            Mã đơn hàng
+            Mã đơn / Mã ủng hộ
           </button>
           <button
             type="button"
-            onClick={() => { setSearchType("phone"); setInputValue(""); setOrders([]); setSearched(false); }}
+            onClick={() => {
+              setSearchType("phone");
+              setInputValue("");
+              setOrders([]);
+              setSearched(false);
+            }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition ${
               searchType === "phone"
                 ? "bg-[var(--brand-surface)] text-[var(--brand-heading)] shadow-sm"
@@ -174,8 +246,8 @@ export default function OrderLookup() {
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={
               searchType === "orderId"
-                ? "Nhập mã đơn, ví dụ: DH1234"
-                : "Nhập số điện thoại đã đặt hàng"
+                ? "Nhập mã: DH1234 hoặc DN12345..."
+                : "Nhập số điện thoại đã đặt hàng / ủng hộ"
             }
             className="w-full rounded-xl border-2 border-[var(--brand-border)] bg-[var(--brand-surface)] px-4 py-3.5 pr-12 text-sm text-[var(--brand-text)] placeholder-[var(--brand-muted)] focus:border-[#315444] focus:outline-none transition"
           />
@@ -195,8 +267,8 @@ export default function OrderLookup() {
         {/* Helper text */}
         <p className="text-xs text-center text-[var(--brand-muted)]">
           {searchType === "orderId"
-            ? "Mã đơn có dạng DHxxxx, ví dụ: DH1234"
-            : "Nhập số điện thoại đã dùng khi đặt hàng"}
+            ? "Nhập mã đơn hàng (DHxxxx) hoặc mã ủng hộ tri ân (DNxxxx)"
+            : "Nhập số điện thoại đã dùng khi đặt hàng hoặc ủng hộ quỹ"}
         </p>
       </form>
 
@@ -214,12 +286,15 @@ export default function OrderLookup() {
           <div className="flex size-14 items-center justify-center rounded-full bg-[var(--brand-surface-alt)] text-[var(--brand-muted)] mb-3">
             <Package className="size-7" />
           </div>
-          <h3 className="text-base font-bold text-[var(--brand-heading)]">Không tìm thấy đơn hàng</h3>
+          <h3 className="text-base font-bold text-[var(--brand-heading)]">
+            Không tìm thấy thông tin
+          </h3>
           <p className="mt-1 text-sm text-[var(--brand-muted)]">
-            Không có đơn hàng nào khớp với <strong>{searchType === "orderId" ? "mã" : "số điện thoại"}</strong> bạn nhập.
+            Không có đơn hàng hoặc lượt ủng hộ nào khớp với{" "}
+            <strong>{searchType === "orderId" ? "mã" : "số điện thoại"}</strong> bạn nhập.
           </p>
           <p className="mt-2 text-xs text-[var(--brand-muted)]">
-            Hãy kiểm tra lại thông tin hoặc nhắn Zalo để được hỗ trợ.
+            Hãy kiểm tra lại thông tin hoặc liên hệ nhóm The Boys để được hỗ trợ nhanh nhất.
           </p>
           <a
             href="https://zalo.me/0916532006"
@@ -237,12 +312,109 @@ export default function OrderLookup() {
       {orders.length > 0 && (
         <div className="mt-6 space-y-4">
           <p className="text-sm font-semibold text-[var(--brand-heading)]">
-            Tìm thấy {orders.length} đơn hàng
+            Tìm thấy {orders.length} kết quả
           </p>
 
           {orders.map((order, idx) => {
-            const statusDisplay = getStatusDisplay(order.status);
+            const isDonationOrder =
+              !!order.isDonation ||
+              (order.orderId || "").toUpperCase().startsWith("DN") ||
+              (order.items || "").toLowerCase().includes("ủng hộ");
 
+            const statusDisplay = getStatusDisplay(order.status, isDonationOrder);
+            const giftsEquivalent = Math.max(
+              1,
+              Math.round((Number(order.total) / 150000) * 10) / 10
+            );
+
+            // GIAO DIỆN RIÊNG DÀNH CHO ĐƠN ỦNG HỘ TRI ÂN (DNxxxx)
+            if (isDonationOrder) {
+              return (
+                <div
+                  key={idx}
+                  className={`rounded-2xl border-2 p-4 space-y-3 shadow-sm ${statusDisplay.bg}`}
+                >
+                  {/* Header: Huy hiệu Tri Ân + Trạng thái */}
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="flex size-7 items-center justify-center rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-400">
+                        <Heart className="size-4 fill-rose-500 text-rose-500" />
+                      </span>
+                      <div>
+                        <span className="font-bold text-[var(--brand-heading)] font-mono text-sm">
+                          {order.orderId}
+                        </span>
+                        <span className="ml-2 inline-block rounded-md bg-rose-500/15 px-2 py-0.5 text-[10px] font-extrabold text-rose-600 dark:text-rose-400">
+                          Ủng hộ Quỹ Tri Ân
+                        </span>
+                      </div>
+                    </div>
+                    <div
+                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${statusDisplay.text}`}
+                    >
+                      {statusDisplay.icon}
+                      <span>{statusDisplay.label}</span>
+                    </div>
+                  </div>
+
+                  {/* Tên nhà hảo tâm */}
+                  <div className="text-sm">
+                    <span className="text-[var(--brand-muted)]">Nhà hảo tâm: </span>
+                    <strong className="text-[var(--brand-heading)] text-base">
+                      {order.customerName || "Nhà hảo tâm giấu tên"}
+                    </strong>
+                  </div>
+
+                  {/* Số tiền & Ý nghĩa */}
+                  <div className="rounded-xl bg-[var(--brand-surface)]/70 border border-[var(--brand-border)] p-3 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-[var(--brand-muted)]">Số tiền ủng hộ:</span>
+                      <span className="text-lg font-black text-[#df8143]">
+                        {Number(order.total).toLocaleString("vi-VN")}đ
+                      </span>
+                    </div>
+                    <p className="text-[11.5px] font-medium text-emerald-700 dark:text-emerald-400">
+                      🎁 Tương đương chung tay góp <strong>~{giftsEquivalent} phần quà dinh dưỡng</strong> gửi trao cựu chiến binh ngày 17/10.
+                    </p>
+                  </div>
+
+                  {/* Lời chúc tri ân nếu có */}
+                  {order.note && (
+                    <div className="rounded-xl bg-[var(--brand-surface)]/40 p-3 text-xs italic text-[var(--brand-muted)] border-l-2 border-[#df8143]/60">
+                      &ldquo;{order.note.replace(/^\[LỜI CHÚC TRI ÂN\]:\s*"?/i, "").replace(/"$/, "")}&rdquo;
+                    </div>
+                  )}
+
+                  {/* Footer & Nút xem lại Giấy chứng nhận */}
+                  <div className="pt-2 border-t border-[var(--brand-border)]/50 flex flex-col sm:flex-row items-center justify-between gap-2.5">
+                    <span className="text-[11px] text-[var(--brand-muted)]">
+                      {order.createdAt ? `Ngày gửi: ${order.createdAt}` : "Chiến dịch The Boys FPT"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setSelectedCertificate({
+                          id: order.orderId,
+                          name: order.customerName,
+                          amount: Number(order.total),
+                          message: order.note
+                            ? order.note.replace(/^\[LỜI CHÚC TRI ÂN\]:\s*"?/i, "").replace(/"$/, "")
+                            : "Tri ân các anh hùng thời bình ❤️",
+                          createdAt: order.createdAt,
+                          phone: order.phone,
+                        })
+                      }
+                      className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#df8143]/50 bg-[#df8143]/10 hover:bg-[#df8143]/20 px-3 py-1.5 text-xs font-bold text-[#df8143] transition active:scale-95"
+                    >
+                      <Award className="size-3.5" />
+                      <span>Xem Giấy chứng nhận (.PNG)</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            }
+
+            // GIAO DIỆN ĐƠN MUA HÀNG (DHxxxx)
             return (
               <div
                 key={idx}
@@ -252,9 +424,13 @@ export default function OrderLookup() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Package className="size-5 text-[var(--brand-muted)]" />
-                    <span className="font-bold text-[var(--brand-heading)]">{order.orderId}</span>
+                    <span className="font-bold text-[var(--brand-heading)]">
+                      {order.orderId}
+                    </span>
                   </div>
-                  <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${statusDisplay.text}`}>
+                  <div
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${statusDisplay.text}`}
+                  >
                     {statusDisplay.icon}
                     <span>{statusDisplay.label}</span>
                   </div>
@@ -263,29 +439,39 @@ export default function OrderLookup() {
                 {/* Customer */}
                 <div className="text-sm">
                   <span className="text-[var(--brand-muted)]">Khách hàng: </span>
-                  <span className="font-semibold text-[var(--brand-heading)]">{order.customerName}</span>
+                  <span className="font-semibold text-[var(--brand-heading)]">
+                    {order.customerName}
+                  </span>
                 </div>
 
                 {/* Pickup Info */}
                 <div className="rounded-xl bg-[var(--brand-surface)]/50 p-3 space-y-1.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-[var(--brand-muted)]">Ngày nhận:</span>
-                    <span className="font-semibold text-[var(--brand-heading)]">{formatPickupDate(order.pickupDate)}</span>
+                    <span className="font-semibold text-[var(--brand-heading)]">
+                      {formatPickupDate(order.pickupDate)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--brand-muted)]">Khung giờ:</span>
-                    <span className="font-semibold text-[var(--brand-heading)]">{order.pickupTime}</span>
+                    <span className="font-semibold text-[var(--brand-heading)]">
+                      {order.pickupTime}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[var(--brand-muted)]">Địa điểm:</span>
-                    <span className="font-semibold text-[var(--brand-heading)] text-right max-w-[65%]">{order.pickupLocation}</span>
+                    <span className="font-semibold text-[var(--brand-heading)] text-right max-w-[65%]">
+                      {order.pickupLocation}
+                    </span>
                   </div>
                 </div>
 
                 {/* Items if available */}
                 {order.items && (
                   <div className="text-xs text-[var(--brand-muted)] bg-[var(--brand-surface)]/40 rounded-xl p-2.5">
-                    <span className="font-semibold text-[var(--brand-heading)]">Món đã đặt: </span>
+                    <span className="font-semibold text-[var(--brand-heading)]">
+                      Món đã đặt:{" "}
+                    </span>
                     <span>{order.items}</span>
                   </div>
                 )}
@@ -309,7 +495,9 @@ export default function OrderLookup() {
                         Thông báo thanh toán
                       </p>
                       <p className="opacity-90">
-                        Nếu bạn đã chuyển khoản, vui lòng chờ khoảng <strong>15–20 phút</strong> để nhóm đối soát tài khoản và cập nhật trạng thái đơn hàng nhé!
+                        Nếu bạn đã chuyển khoản, vui lòng chờ khoảng{" "}
+                        <strong>15–20 phút</strong> để nhóm đối soát tài khoản và cập nhật
+                        trạng thái đơn hàng nhé!
                       </p>
                     </div>
                   </div>
@@ -333,6 +521,12 @@ export default function OrderLookup() {
           0916 532 006
         </a>
       </div>
+
+      {/* Modal Chứng Nhận Tri Ân */}
+      <DonationCertificateModal
+        data={selectedCertificate}
+        onClose={() => setSelectedCertificate(null)}
+      />
     </div>
   );
 }

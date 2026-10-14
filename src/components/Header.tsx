@@ -61,6 +61,13 @@ export default function Header() {
           <a href="#shop" className="transition hover:text-[#df8143]">
             Gian hàng sẻ chia
           </a>
+          <a
+            href="#donate"
+            className="flex items-center gap-1.5 font-bold text-[#df8143] hover:text-[#c4692e] transition"
+          >
+            <Heart className="size-3.5 fill-[#df8143]" />
+            <span>Ủng hộ quỹ</span>
+          </a>
           <a href="#journey" className="transition hover:text-[#df8143]">
             Hành trình tri ân
           </a>
@@ -161,6 +168,14 @@ export default function Header() {
           >
             <Store className="size-4 text-[#315444] dark:text-[#a8bf9e]" />
             <span>Gian hàng sẻ chia</span>
+          </a>
+          <a
+            href="#donate"
+            onClick={() => setMobileMenuOpen(false)}
+            className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-[#df8143] bg-[#df8143]/10 hover:bg-[#df8143]/20 active:bg-[#df8143]/25 transition"
+          >
+            <Heart className="size-4 fill-[#df8143]" />
+            <span>Ủng hộ quỹ tri ân & Bảng vàng</span>
           </a>
           <a
             href="#journey"

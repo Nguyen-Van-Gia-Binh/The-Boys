@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
     if (body.giftSummary) {
       itemsList.push(`🎁 Quà tặng kèm: ${body.giftSummary}`);
     }
+    if (body.voucherCode) {
+      itemsList.push(`🎟️ Voucher: ${body.voucherCode} (-${(body.discountAmount || 0).toLocaleString("vi-VN")}đ)`);
+    }
     const itemsSummary = itemsList.join("; ");
 
     const initialStatus = "Chờ chuyển khoản (VietQR)";

@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import ShopSection from "@/components/ShopSection";
+import DonationSection from "@/components/DonationSection";
 import AboutSection from "@/components/AboutSection";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
@@ -22,6 +23,7 @@ export default function Home() {
         <main className="flex-1 w-full max-w-full pt-[62px] sm:pt-[72px]">
           <Hero />
           <ShopSection />
+          <DonationSection />
           <AboutSection />
         </main>
 

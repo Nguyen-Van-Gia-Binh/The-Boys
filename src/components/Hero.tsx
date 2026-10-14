@@ -34,18 +34,25 @@ export default function Hero() {
         </p>
 
         {/* Action Buttons */}
-        <div className="mt-9 flex flex-wrap items-center gap-5">
+        <div className="mt-9 flex flex-wrap items-center gap-3.5 sm:gap-4">
           <a
             href="#shop"
-            className="inline-flex items-center gap-3 rounded-full bg-[#315444] px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#315444]/20 transition hover:bg-[#243e33] active:scale-95"
+            className="inline-flex items-center gap-2 sm:gap-3 rounded-full bg-[#315444] px-6 sm:px-7 py-3 sm:py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#315444]/20 transition hover:bg-[#243e33] active:scale-95"
           >
             Ghé gian hàng <ArrowRight className="size-4" />
           </a>
           <a
-            href="#journey"
-            className="text-sm font-semibold text-[var(--brand-heading)] underline decoration-[#df8143] underline-offset-4 hover:text-[#df8143] transition"
+            href="#donate"
+            className="inline-flex items-center gap-2 rounded-full border border-[#df8143] bg-[#df8143]/10 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-[#df8143] hover:bg-[#df8143] hover:text-white transition active:scale-95 shadow-xs"
           >
-            Hành trình thiện nguyện
+            <Heart className="size-4 fill-current" />
+            <span>Ủng hộ quỹ tri ân</span>
+          </a>
+          <a
+            href="#journey"
+            className="text-sm font-semibold text-[var(--brand-heading)] underline decoration-[#df8143] underline-offset-4 hover:text-[#df8143] transition ml-1"
+          >
+            Hành trình 17/10
           </a>
         </div>
 

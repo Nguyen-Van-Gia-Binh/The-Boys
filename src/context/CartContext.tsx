@@ -5,6 +5,15 @@ import { CheckCircle2, ArrowRight, X } from "lucide-react";
 import { CartItem, Product, OrderPayload } from "@/types";
 import { calculateVoucherBenefit } from "@/data/campaign";
 
+export interface AppliedVoucher {
+  code: string;
+  discountPercent: number;
+  maxDiscount?: number;
+  minSpend: number;
+  applicableCategory: string;
+  description: string;
+}
+
 interface CartContextType {
   items: CartItem[];
   addToCart: (product: Product, selectedSize?: { name: string; price: number }) => void;
@@ -23,6 +32,10 @@ interface CartContextType {
   totalGiftBanhTrang: number;
   giftSummary: string;
   voucherBenefit: ReturnType<typeof calculateVoucherBenefit>;
+  appliedVoucher: AppliedVoucher | null;
+  applyVoucher: (code: string) => Promise<{ success: boolean; message: string }>;
+  removeVoucher: () => void;
+  isApplyingVoucher: boolean;
   pastOrders: OrderPayload[];
   addPastOrder: (order: OrderPayload) => void;
   customerPhone: string;
@@ -40,6 +53,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const [pastOrders, setPastOrders] = useState<OrderPayload[]>([]);
   const [customerPhone, setCustomerPhoneState] = useState<string>("");
   const [isOrdersDrawerOpen, setIsOrdersDrawerOpen] = useState(false);
+  const [appliedVoucher, setAppliedVoucher] = useState<AppliedVoucher | null>(null);
+  const [isApplyingVoucher, setIsApplyingVoucher] = useState(false);
 
   const setCustomerPhone = (phone: string) => {
     const clean = phone.trim();
@@ -65,7 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(timer);
   }, [toast]);
 
-  // Load cart and orders from localStorage
+  // Load cart, orders, and voucher from localStorage
   useEffect(() => {
     try {
       const savedCart = localStorage.getItem("theboys_cart");
@@ -76,6 +91,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
       const savedPhone = localStorage.getItem("theboys_customer_phone");
       if (savedPhone) setCustomerPhoneState(savedPhone);
+
+      const savedVoucher = localStorage.getItem("theboys_voucher");
+      if (savedVoucher) setAppliedVoucher(JSON.parse(savedVoucher));
     } catch {
       // Ignore JSON error
     }
@@ -89,6 +107,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       // Ignore
     }
   }, [items]);
+
+  // Sync voucher to localStorage
+  useEffect(() => {
+    try {
+      if (appliedVoucher) {
+        localStorage.setItem("theboys_voucher", JSON.stringify(appliedVoucher));
+      } else {
+        localStorage.removeItem("theboys_voucher");
+      }
+    } catch {
+      // Ignore
+    }
+  }, [appliedVoucher]);
 
   const addToCart = (product: Product, selectedSize?: { name: string; price: number }) => {
     const unitPrice = selectedSize ? selectedSize.price : product.price;
@@ -151,6 +182,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = () => {
     setItems([]);
+    setAppliedVoucher(null);
   };
 
   const addPastOrder = (order: OrderPayload) => {
@@ -185,8 +217,95 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       : "";
 
   const voucherBenefit = calculateVoucherBenefit(subtotal);
-  const discountAmount = 0;
-  const total = subtotal;
+
+  // Tính số tiền giảm giá theo voucher đang áp dụng
+  const discountAmount = React.useMemo(() => {
+    if (!appliedVoucher) return 0;
+    if (subtotal < appliedVoucher.minSpend) return 0;
+
+    const cat = (appliedVoucher.applicableCategory || "all").toLowerCase();
+    let eligibleSubtotal = subtotal;
+
+    if (cat !== "all") {
+      const eligibleItems = items.filter(
+        (it) => (it.product.category || "").toLowerCase() === cat
+      );
+      eligibleSubtotal = eligibleItems.reduce(
+        (sum, it) => sum + it.unitPrice * it.quantity,
+        0
+      );
+      if (eligibleSubtotal <= 0) return 0;
+    }
+
+    let disc = Math.round(eligibleSubtotal * (appliedVoucher.discountPercent / 100));
+    if (appliedVoucher.maxDiscount && appliedVoucher.maxDiscount > 0) {
+      disc = Math.min(disc, appliedVoucher.maxDiscount);
+    }
+    return Math.min(disc, subtotal);
+  }, [appliedVoucher, items, subtotal]);
+
+  const total = Math.max(0, subtotal - discountAmount);
+
+  const applyVoucher = async (code: string): Promise<{ success: boolean; message: string }> => {
+    const cleanCode = code.trim().toUpperCase();
+    if (!cleanCode) {
+      return { success: false, message: "Vui lòng nhập mã giảm giá." };
+    }
+    if (subtotal <= 0) {
+      return { success: false, message: "Giỏ hàng đang trống. Hãy chọn món trước khi áp mã." };
+    }
+
+    setIsApplyingVoucher(true);
+    try {
+      const res = await fetch("/api/vouchers/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: cleanCode,
+          subtotal,
+          items: items.map((it) => ({
+            category: it.product.category,
+            subtotal: it.unitPrice * it.quantity,
+            quantity: it.quantity,
+          })),
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.valid) {
+        const newVoucher: AppliedVoucher = {
+          code: data.voucherCode,
+          discountPercent: data.discountPercent,
+          maxDiscount: data.maxDiscount || 0,
+          minSpend: data.minSpend || 0,
+          applicableCategory: data.applicableCategory || "all",
+          description: data.description || "",
+        };
+        setAppliedVoucher(newVoucher);
+        setToast({
+          id: Date.now(),
+          title: "Áp mã thành công! 🎉",
+          description: data.message || `Giảm ${data.discountAmount?.toLocaleString("vi-VN")}đ`,
+        });
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: data.message || "Mã giảm giá không hợp lệ." };
+      }
+    } catch {
+      return { success: false, message: "Lỗi kết nối khi kiểm tra mã. Vui lòng thử lại." };
+    } finally {
+      setIsApplyingVoucher(false);
+    }
+  };
+
+  const removeVoucher = () => {
+    setAppliedVoucher(null);
+    setToast({
+      id: Date.now(),
+      title: "Đã gỡ mã giảm giá",
+      description: "Đã hủy áp dụng voucher cho đơn hàng.",
+    });
+  };
 
   return (
     <CartContext.Provider
@@ -208,6 +327,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         totalGiftBanhTrang,
         giftSummary,
         voucherBenefit,
+        appliedVoucher,
+        applyVoucher,
+        removeVoucher,
+        isApplyingVoucher,
         pastOrders,
         addPastOrder,
         customerPhone,

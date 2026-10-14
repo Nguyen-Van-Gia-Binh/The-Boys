@@ -29,6 +29,26 @@ export interface CartItem {
   unitPrice: number;
 }
 
+export interface Voucher {
+  code: string;
+  discountPercent: number;
+  maxDiscount?: number;
+  minSpend: number;
+  applicableCategory: "all" | "combo" | "flower" | "snack" | "drink";
+  expiryDate: string;
+  active: boolean;
+  description: string;
+}
+
+export interface VoucherValidationResult {
+  valid: boolean;
+  message?: string;
+  voucherCode?: string;
+  discountAmount?: number;
+  description?: string;
+  finalTotal?: number;
+}
+
 export interface EarlyBirdVoucher {
   minSpend: number;
   discountPercent: number;
@@ -68,6 +88,7 @@ export interface OrderPayload extends OrderFormData {
   giftSummary?: string;
   subtotal: number;
   discountAmount: number;
+  voucherCode?: string;
   voucherDescription?: string;
   total: number;
   createdAt: string;

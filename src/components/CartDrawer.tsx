@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift, Copy, Check, Calendar, MapPin, Clock } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, ArrowRight, CheckCircle2, QrCode, AlertCircle, Sparkles, Gift, Copy, Check, Calendar, MapPin, Clock, Tag, Ticket, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { CAMPAIGN_INFO } from "@/data/campaign";
 import { OrderFormData, OrderPayload } from "@/types";
@@ -23,6 +23,10 @@ export default function CartDrawer() {
     totalGiftBanhTrang,
     giftSummary,
     voucherBenefit,
+    appliedVoucher,
+    applyVoucher,
+    removeVoucher,
+    isApplyingVoucher,
     pastOrders,
     addPastOrder,
     customerPhone,
@@ -116,6 +120,23 @@ export default function CartDrawer() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [successOrder, setSuccessOrder] = useState<OrderPayload | null>(null);
+  const [voucherInput, setVoucherInput] = useState("");
+  const [voucherError, setVoucherError] = useState("");
+  const [voucherSuccess, setVoucherSuccess] = useState("");
+
+  const handleApplyVoucher = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    if (!voucherInput.trim()) return;
+    setVoucherError("");
+    setVoucherSuccess("");
+    const res = await applyVoucher(voucherInput.trim());
+    if (res.success) {
+      setVoucherSuccess(res.message);
+      setVoucherInput("");
+    } else {
+      setVoucherError(res.message);
+    }
+  };
 
   if (!isCartOpen) return null;
 
@@ -168,7 +189,9 @@ export default function CartDrawer() {
       })),
       giftSummary: giftSummary || undefined,
       subtotal,
-      discountAmount: 0,
+      discountAmount: discountAmount || 0,
+      voucherCode: appliedVoucher?.code,
+      voucherDescription: appliedVoucher?.description,
       total,
       createdAt: new Date().toISOString(),
     };
@@ -473,8 +496,98 @@ export default function CartDrawer() {
                 </div>
               )}
 
+              {/* Khu vực Nhập Mã Giảm Giá (Vouchers) */}
+              <div className="mt-4 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--brand-heading)]">
+                    <Tag className="size-3.5 text-[#df8143]" />
+                    <span>Mã giảm giá (Voucher)</span>
+                  </div>
+                  {appliedVoucher && (
+                    <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                      Đang áp dụng
+                    </span>
+                  )}
+                </div>
+
+                {appliedVoucher ? (
+                  <div className="flex items-center justify-between rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2.5">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Ticket className="size-4 text-emerald-600 shrink-0" />
+                        <span className="text-xs font-black tracking-wider text-emerald-700 dark:text-emerald-300 uppercase">
+                          {appliedVoucher.code}
+                        </span>
+                        <span className="rounded bg-emerald-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                          -{appliedVoucher.discountPercent}%
+                        </span>
+                      </div>
+                      <p className="mt-0.5 text-[11px] text-[var(--brand-muted)] truncate">
+                        {appliedVoucher.description}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        removeVoucher();
+                        setVoucherSuccess("");
+                        setVoucherError("");
+                      }}
+                      className="ml-2 flex size-6 shrink-0 items-center justify-center rounded-full text-neutral-400 hover:bg-neutral-200 hover:text-neutral-700 dark:hover:bg-neutral-800 transition"
+                      title="Gỡ mã giảm giá"
+                    >
+                      <X className="size-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleApplyVoucher} className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type="text"
+                          value={voucherInput}
+                          onChange={(e) => {
+                            setVoucherInput(e.target.value.toUpperCase());
+                            setVoucherError("");
+                          }}
+                          placeholder="Nhập mã giảm giá..."
+                          className="w-full rounded-xl border border-[var(--brand-border)] bg-[var(--brand-surface)] px-3 py-2 text-xs font-bold uppercase tracking-wider text-[var(--brand-text)] placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder-[var(--brand-muted)] outline-none focus:border-[#315444] transition"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={isApplyingVoucher || !voucherInput.trim()}
+                        className="rounded-xl bg-[#315444] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[#243e33] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition shrink-0 flex items-center gap-1.5"
+                      >
+                        {isApplyingVoucher ? (
+                          <>
+                            <Loader2 className="size-3 animate-spin" />
+                            <span>Kiểm tra...</span>
+                          </>
+                        ) : (
+                          <span>Áp dụng</span>
+                        )}
+                      </button>
+                    </div>
+
+                    {voucherError && (
+                      <p className="text-[11px] font-medium text-red-600 dark:text-red-400 flex items-center gap-1">
+                        <AlertCircle className="size-3 shrink-0" />
+                        <span>{voucherError}</span>
+                      </p>
+                    )}
+                    {voucherSuccess && (
+                      <p className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                        <CheckCircle2 className="size-3 shrink-0" />
+                        <span>{voucherSuccess}</span>
+                      </p>
+                    )}
+                  </form>
+                )}
+              </div>
+
               {/* Tạm tính & Voucher Section */}
-              <div className="mt-4 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 space-y-2">
+              <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-semibold text-[var(--brand-heading)]">Tạm tính:</span>
                   <span className="text-base font-extrabold text-[#df8143]">
@@ -490,6 +603,17 @@ export default function CartDrawer() {
                       Quà tặng Pre-order Combo:
                     </span>
                     <span>+{totalGiftBanhTrang} bịch Bánh tráng ngũ vị (0đ)</span>
+                  </div>
+                )}
+
+                {/* Dòng giảm giá voucher */}
+                {discountAmount > 0 && (
+                  <div className="flex items-center justify-between text-xs text-emerald-600 dark:text-emerald-400 font-bold pt-1 border-t border-[var(--brand-border)]">
+                    <span className="flex items-center gap-1">
+                      <Ticket className="size-3.5" />
+                      Giảm giá voucher ({appliedVoucher?.code}):
+                    </span>
+                    <span>-{discountAmount.toLocaleString("vi-VN")}đ</span>
                   </div>
                 )}
 
