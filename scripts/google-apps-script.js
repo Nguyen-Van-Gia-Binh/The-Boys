@@ -435,6 +435,10 @@ function doGet(e) {
         }
 
         var rawPercent = Number(vData[r][vPercentCol]) || 0;
+        // Nếu ô được định dạng Phần trăm chuẩn trên Google Sheets (ví dụ 10% = 0.1, 15% = 0.15)
+        if (rawPercent > 0 && rawPercent <= 1) {
+          rawPercent = Math.round(rawPercent * 100);
+        }
         var rawMax = Number(vData[r][vMaxCol]) || 0;
         var rawMinSpend = Number(vData[r][vMinSpendCol]) || 0;
         var rawCategory = String(vData[r][vCategoryCol] || "all").trim().toLowerCase();

@@ -237,7 +237,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (eligibleSubtotal <= 0) return 0;
     }
 
-    let disc = Math.round(eligibleSubtotal * (appliedVoucher.discountPercent / 100));
+    let pct = Number(appliedVoucher.discountPercent) || 0;
+    if (pct > 0 && pct <= 1) {
+      pct = Math.round(pct * 100);
+    }
+
+    let disc = Math.round(eligibleSubtotal * (pct / 100));
     if (appliedVoucher.maxDiscount && appliedVoucher.maxDiscount > 0) {
       disc = Math.min(disc, appliedVoucher.maxDiscount);
     }
