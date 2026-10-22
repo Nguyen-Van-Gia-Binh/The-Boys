@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Donor } from "@/data/donations";
+import { CAMPAIGN_INFO } from "@/data/campaign";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -103,6 +104,17 @@ export async function GET() {
  */
 export async function POST(req: NextRequest) {
   try {
+    if (CAMPAIGN_INFO.isEnded) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Chiến dịch gây quỹ đã hoàn thành trọn vẹn và đạt mục tiêu! Hệ thống đã dừng tiếp nhận các lượt ủng hộ mới. Cảm ơn tấm lòng vàng của bạn!",
+        },
+        { status: 403 }
+      );
+    }
+
     const body = await req.json();
     const { name, amount, message, isAnonymous, phone, donationId: clientDonationId } = body;
 

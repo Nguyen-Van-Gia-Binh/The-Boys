@@ -6,6 +6,15 @@ export const CAMPAIGN_INFO = {
   groupName: "The Boys Project — Sinh viên ĐH FPT",
   launchDate: "13/10/2026",
   mainEventDate: "17/10/2026",
+  isEnded: true,
+  archiveInfo: {
+    statusText: "Chiến dịch gây quỹ đã khép lại",
+    completionDate: "17/10/2026",
+    headline: "Hành trình gây quỹ đã khép lại trọn vẹn yêu thương!",
+    message:
+      "Toàn bộ hoạt động bán hàng gây quỹ và tiếp nhận ủng hộ đã kết thúc vào ngày 17/10/2026. Nguồn lực từ chiến dịch sẽ được nhóm The Boys phối hợp cùng Câu lạc bộ đồng hành để thực hiện hoạt động thăm hỏi, tri ân các chú thương binh. Website hiện được lưu giữ làm không gian kỷ niệm và vinh danh những tấm lòng vàng.",
+    thankYou: "The Boys xin gửi lời cảm ơn chân thành nhất đến Quý thầy cô, các bạn sinh viên và Quý nhà hảo tâm!",
+  },
   orderTarget: 100,
   charityGoal: {
     giftCount: 20,

@@ -3,6 +3,7 @@
 import React from "react";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
+import MemorialBanner from "@/components/MemorialBanner";
 import Hero from "@/components/Hero";
 import ShopSection from "@/components/ShopSection";
 import DonationSection from "@/components/DonationSection";
@@ -21,6 +22,7 @@ export default function Home() {
 
         {/* Main Content Sections */}
         <main className="flex-1 w-full max-w-full pt-[62px] sm:pt-[72px]">
+          <MemorialBanner />
           <Hero />
           <ShopSection />
           <DonationSection />

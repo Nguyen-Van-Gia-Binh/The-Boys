@@ -27,16 +27,16 @@ export default function AboutSection() {
               Chiến dịch <strong>&ldquo;Hành Trình Dòng Nước Về Nguồn&rdquo;</strong> được khởi xướng bởi nhóm sinh viên The Boys (Đại học FPT TP.HCM) với tâm nguyện tri ân thế hệ đi trước — những người lính đã hiến dâng thanh xuân và thân thể cho độc lập dân tộc.
             </p>
             <p>
-              Toàn bộ lợi nhuận thu được từ việc bán đồ ăn vặt, cafe, hoa 20/10 và các combo workshop lưu niệm sẽ được dùng 100% để chuẩn bị <strong>{charityGoal.giftCount} phần quà ý nghĩa</strong> trao tận tay các cô chú thương binh nặng.
+              Toàn bộ nguồn lực thu được từ việc bán đồ ăn vặt, cafe, hoa và các combo workshop lưu niệm sẽ được phối hợp cùng Câu lạc bộ đồng hành để thực hiện chương trình thăm hỏi, tri ân các cô chú thương binh nặng.
             </p>
             <div className="grid grid-cols-2 gap-4 pt-3 sm:grid-cols-4">
               <div className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface)] p-3 text-center">
-                <p className="text-xl sm:text-2xl font-extrabold text-[#df8143]">20</p>
-                <p className="text-xs text-[var(--brand-muted)]">Phần quà tri ân</p>
+                <p className="text-base sm:text-lg font-extrabold text-[#df8143]">The Boys x CLB</p>
+                <p className="text-xs text-[var(--brand-muted)]">Đơn vị phối hợp</p>
               </div>
               <div className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface)] p-3 text-center">
-                <p className="text-xl sm:text-2xl font-extrabold text-[#315444]">150k</p>
-                <p className="text-xs text-[var(--brand-muted)]">Giá trị mỗi phần</p>
+                <p className="text-base sm:text-lg font-extrabold text-[#315444]">Sinh viên FPT</p>
+                <p className="text-xs text-[var(--brand-muted)]">Cơ sở TP.HCM</p>
               </div>
               <div className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface)] p-3 text-center">
                 <p className="text-xl sm:text-2xl font-extrabold text-[#df8143]">13/10</p>
@@ -67,20 +67,25 @@ export default function AboutSection() {
             </p>
           </div>
 
-          {/* Chi tiết mỗi phần quà */}
+          {/* Các giá trị cốt lõi của chuyến đi */}
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {charityGoal.giftDetails.map((gift, idx) => (
+            {[
+              { title: "Sẻ chia chân thành", desc: "Gửi tặng những phần quà thăm hỏi, động viên tinh thần đến các cô chú." },
+              { title: "Tri ân cội nguồn", desc: "Lắng nghe và ghi nhớ những cống hiến to lớn của thế hệ đi trước." },
+              { title: "Trách nhiệm người trẻ", desc: "Lan tỏa lối sống đẹp, tinh thần biết ơn trong cộng đồng sinh viên." },
+              { title: "Gắn kết đồng hành", desc: "Sự chung tay phối hợp chặt chẽ giữa The Boys và Câu lạc bộ đồng hành." },
+            ].map((item, idx) => (
               <div
                 key={idx}
-                className="flex flex-col justify-between rounded-2xl bg-white/10 p-4 backdrop-blur-sm border border-white/10"
+                className="flex flex-col justify-between rounded-2xl bg-white/10 p-5 backdrop-blur-sm border border-white/10"
               >
                 <div>
                   <span className="flex size-8 items-center justify-center rounded-full bg-[#e6b057]/20 text-[#e6b057] mb-3">
-                    <Gift className="size-4" />
+                    <Heart className="size-4" />
                   </span>
-                  <p className="font-semibold text-white text-sm">{gift.name}</p>
+                  <p className="font-bold text-white text-base">{item.title}</p>
                 </div>
-                <p className="mt-3 text-xs font-bold text-[#e6b057]">{gift.price}</p>
+                <p className="mt-2 text-xs leading-relaxed text-[#c1d0c4]">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -98,11 +103,11 @@ export default function AboutSection() {
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="size-4 shrink-0 text-[#e6b057] mt-0.5" />
-                <span>Trao tận tay 20 túi quà dinh dưỡng (sữa Ensure, bánh Solite, sữa Nutifood).</span>
+                <span>Phối hợp cùng Câu lạc bộ trao gửi các phần quà thăm hỏi sức khỏe đến các cô chú.</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <CheckCircle2 className="size-4 shrink-0 text-[#e6b057] mt-0.5" />
-                <span>Cuối buổi: Đại diện các bạn sinh viên trực tiếp đọc những lá thư tri ân viết tay gửi gắm lòng biết ơn sâu sắc.</span>
+                <span>Giao lưu, chia sẻ và gửi gắm những tình cảm tri ân ấm áp nhất của thế hệ trẻ.</span>
               </li>
             </ul>
           </div>

@@ -17,6 +17,7 @@ import {
   HandHeart,
   RefreshCw,
   Award,
+  CheckCircle2,
 } from "lucide-react";
 import { DONATION_CONFIG, Donor } from "@/data/donations";
 import { CAMPAIGN_INFO } from "@/data/campaign";
@@ -219,45 +220,68 @@ export default function DonationSection() {
             Dù bạn ở xa không mua hoa hay đồ ăn vặt, bạn vẫn có thể cùng nhóm sinh viên The Boys (ĐH FPT) gửi gắm tấm lòng tri ân đến các cô chú thương binh nặng.
           </p>
 
-          {/* Campaign Progress Card */}
+          {/* Campaign Progress / Completion Notice Card */}
           <div className="mt-8 rounded-3xl border border-[var(--brand-border)] bg-[var(--brand-surface)] p-5 sm:p-6 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-              <div className="flex items-center gap-2 text-left">
-                <Flame className="size-5 text-[#df8143] animate-pulse" />
-                <span className="text-sm font-bold text-[var(--brand-heading)]">
-                  Tiến độ Quỹ Quà Tặng Thương Binh
-                </span>
-                {isLiveSheet && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
-                    ● Dữ liệu thực từ Google Sheet
+            {CAMPAIGN_INFO.isEnded ? (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+                <div className="flex items-center gap-3">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                    <CheckCircle2 className="size-5" />
                   </span>
-                )}
-              </div>
-              <div className="text-left sm:text-right">
-                <span className="text-xl sm:text-2xl font-black text-[#315444] dark:text-[#a8bf9e]">
-                  {totalRaised.toLocaleString("vi-VN")}đ
+                  <div>
+                    <span className="text-sm font-bold text-[var(--brand-heading)] block">
+                      Hoạt động tiếp nhận gây quỹ đã hoàn tất
+                    </span>
+                    <span className="text-xs text-[var(--brand-muted)]">
+                      Toàn bộ nguồn lực sẽ được phối hợp cùng Câu lạc bộ đồng hành trong chương trình tri ân
+                    </span>
+                  </div>
+                </div>
+                <span className="self-start sm:self-auto text-xs font-semibold px-3 py-1 rounded-full bg-[#df8143]/10 text-[#df8143] shrink-0">
+                  Đã khép lại tiếp nhận
                 </span>
-                <span className="text-xs text-[var(--brand-muted)] font-medium">
-                  {" "}/ {targetAmount.toLocaleString("vi-VN")}đ ({progressPercent}%)
-                </span>
               </div>
-            </div>
+            ) : (
+              <>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2 text-left">
+                    <Flame className="size-5 text-[#df8143] animate-pulse" />
+                    <span className="text-sm font-bold text-[var(--brand-heading)]">
+                      Tiến độ Quỹ Quà Tặng Thương Binh
+                    </span>
+                    {isLiveSheet && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-700 dark:text-emerald-300">
+                        ● Dữ liệu thực từ Google Sheet
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <span className="text-xl sm:text-2xl font-black text-[#315444] dark:text-[#a8bf9e]">
+                      {totalRaised.toLocaleString("vi-VN")}đ
+                    </span>
+                    <span className="text-xs text-[var(--brand-muted)] font-medium">
+                      {" "}/ {targetAmount.toLocaleString("vi-VN")}đ ({progressPercent}%)
+                    </span>
+                  </div>
+                </div>
 
-            {/* Progress Bar */}
-            <div className="h-3.5 w-full rounded-full bg-[var(--brand-border)] overflow-hidden p-0.5">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-[#e6b057] via-[#df8143] to-[#315444] transition-all duration-1000 ease-out"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
+                {/* Progress Bar */}
+                <div className="h-3.5 w-full rounded-full bg-[var(--brand-border)] overflow-hidden p-0.5">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-[#e6b057] via-[#df8143] to-[#315444] transition-all duration-1000 ease-out"
+                    style={{ width: `${progressPercent}%` }}
+                  />
+                </div>
 
-            <div className="mt-3 flex flex-wrap items-center justify-between text-xs font-semibold text-[var(--brand-muted)] pt-1">
-              <span className="flex items-center gap-1.5 text-[#df8143]">
-                <Gift className="size-3.5" />
-                Đã bảo trợ: <strong>{giftsCovered} / 20 phần quà</strong>
-              </span>
-              <span>150.000đ / phần </span>
-            </div>
+                <div className="mt-3 flex flex-wrap items-center justify-between text-xs font-semibold text-[var(--brand-muted)] pt-1">
+                  <span className="flex items-center gap-1.5 text-[#df8143]">
+                    <Gift className="size-3.5" />
+                    Đã bảo trợ: <strong>{giftsCovered} / 20 phần quà</strong>
+                  </span>
+                  <span>150.000đ / phần </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -265,25 +289,103 @@ export default function DonationSection() {
         <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
           {/* ================= COLUMN 1: FORM & QR (7 COLS) ================= */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="rounded-3xl border border-[var(--brand-border)] bg-[var(--brand-surface)] p-6 sm:p-8 shadow-sm">
-              <div className="flex items-center justify-between border-b border-[var(--brand-border)] pb-4 mb-6">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex size-9 items-center justify-center rounded-2xl bg-[#df8143]/15 text-[#df8143]">
-                    <HandHeart className="size-5" />
+            {CAMPAIGN_INFO.isEnded ? (
+              <div className="rounded-3xl border border-[#df8143]/30 bg-[var(--brand-surface)] p-6 sm:p-8 shadow-sm space-y-6">
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[var(--brand-border)] pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#df8143] to-[#c44719] text-white shadow-md">
+                      <Trophy className="size-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-[var(--brand-heading)] flex items-center gap-2">
+                        Chiến Dịch Gây Quỹ Đã Khép Lại
+                        <Sparkles className="size-4 text-[#df8143]" />
+                      </h3>
+                      <p className="text-xs text-[var(--brand-muted)]">
+                        Thời gian kết thúc tiếp nhận: 17/10/2026
+                      </p>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 self-start sm:self-auto text-[11px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/15 px-3 py-1 rounded-full border border-emerald-500/30">
+                    <CheckCircle2 className="size-3.5 text-emerald-600" /> Hoàn thành gây quỹ
                   </span>
-                  <div>
-                    <h3 className="text-base sm:text-lg font-bold text-[var(--brand-heading)]">
-                      Chọn mức ủng hộ của bạn
-                    </h3>
-                    <p className="text-xs text-[var(--brand-muted)]">
-                      Mỗi đóng góp đều trao tận tay các cô chú thương binh
-                    </p>
+                </div>
+
+                {/* 3 Metric Information Boxes (Private: No money, no gift details/counts) */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center">
+                    <span className="text-[11px] font-semibold text-[var(--brand-muted)] block uppercase tracking-wider">
+                      Mục tiêu hoạt động
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-[#315444] dark:text-[#a8bf9e] mt-1.5 block">
+                      Thăm hỏi &amp; Tri ân
+                    </span>
+                    <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium">Phối hợp cùng CLB</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center">
+                    <span className="text-[11px] font-semibold text-[var(--brand-muted)] block uppercase tracking-wider">
+                      Đơn vị thực hiện
+                    </span>
+                    <span className="text-lg sm:text-xl font-extrabold text-[#df8143] mt-1.5 block truncate">
+                      The Boys x CLB
+                    </span>
+                    <span className="text-[11px] text-[var(--brand-muted)]">Sinh viên ĐH FPT</span>
+                  </div>
+
+                  <div className="rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center">
+                    <span className="text-[11px] font-semibold text-[var(--brand-muted)] block uppercase tracking-wider">
+                      Tấm lòng vàng
+                    </span>
+                    <span className="text-2xl sm:text-3xl font-extrabold text-[var(--brand-heading)] mt-0.5 block">
+                      {sortedDonors.length}
+                    </span>
+                    <span className="text-[11px] text-[var(--brand-muted)]">Lượt lưu niệm Bảng Vàng</span>
                   </div>
                 </div>
-                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
-                  <ShieldCheck className="size-3.5" /> Minh bạch 100%
-                </span>
+
+                {/* Heartfelt Thank You Box */}
+                <div className="rounded-2xl border border-[#315444]/20 bg-gradient-to-br from-[#315444]/10 via-[var(--brand-surface-alt)] to-[var(--brand-surface-alt)] p-5 text-xs sm:text-sm text-[var(--brand-text)] leading-relaxed space-y-2.5">
+                  <div className="flex items-center gap-2 font-bold text-[#315444] dark:text-[#a8bf9e]">
+                    <Heart className="size-4.5 fill-current text-[#df8143]" />
+                    <span>Lời Tri Ân Từ Nhóm Sinh Viên The Boys:</span>
+                  </div>
+                  <p className="italic text-[var(--brand-heading)] leading-relaxed">
+                    &ldquo;Toàn bộ nguồn lực từ chiến dịch sẽ được nhóm The Boys phối hợp cùng Câu lạc bộ đồng hành tổ chức hoạt động thăm hỏi và tri ân các cô chú thương binh.&rdquo;
+                  </p>
+                  <p className="text-xs text-[var(--brand-muted)]">
+                    Nhóm xin gửi lời cảm ơn chân thành nhất đến Quý thầy cô, các nhà hảo tâm và các bạn sinh viên đã luôn tin tưởng, ủng hộ và đồng hành cùng dự án!
+                  </p>
+                </div>
+
+                {/* Notice that gateway is closed */}
+                <div className="text-center pt-2 border-t border-[var(--brand-border)]">
+                  <p className="text-xs text-[var(--brand-muted)] italic">
+                    🔒 Cổng nhận đóng góp trực tuyến và mã QR chuyển khoản đã chính thức đóng từ ngày 17/10/2026. Bảng Vàng và danh sách tri ân được lưu giữ làm kỷ niệm trên trang web này.
+                  </p>
+                </div>
               </div>
+            ) : (
+              <div className="rounded-3xl border border-[var(--brand-border)] bg-[var(--brand-surface)] p-6 sm:p-8 shadow-sm">
+                <div className="flex items-center justify-between border-b border-[var(--brand-border)] pb-4 mb-6">
+                  <div className="flex items-center gap-2.5">
+                    <span className="flex size-9 items-center justify-center rounded-2xl bg-[#df8143]/15 text-[#df8143]">
+                      <HandHeart className="size-5" />
+                    </span>
+                    <div>
+                      <h3 className="text-base sm:text-lg font-bold text-[var(--brand-heading)]">
+                        Chọn mức ủng hộ của bạn
+                      </h3>
+                      <p className="text-xs text-[var(--brand-muted)]">
+                        Mỗi đóng góp đều trao tận tay các cô chú thương binh
+                      </p>
+                    </div>
+                  </div>
+                  <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full">
+                    <ShieldCheck className="size-3.5" /> Minh bạch 100%
+                  </span>
+                </div>
 
               {/* Step 1: Chọn số tiền */}
               <div className="space-y-3">
@@ -575,6 +677,7 @@ export default function DonationSection() {
                 </div>
               </div>
             </div>
+            )}
           </div>
 
           {/* ================= COLUMN 2: BẢNG VÀNG LEADERBOARD (5 COLS) ================= */}

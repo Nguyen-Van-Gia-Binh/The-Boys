@@ -158,6 +158,11 @@ export default function CartDrawer() {
     e.preventDefault();
     setErrorMessage("");
 
+    if (CAMPAIGN_INFO.isEnded) {
+      setErrorMessage("Chiến dịch đã kết thúc thành công tốt đẹp! Hệ thống đã dừng tiếp nhận đơn hàng mới.");
+      return;
+    }
+
     if (items.length === 0) {
       setErrorMessage("Giỏ hàng của bạn đang trống.");
       return;
@@ -264,6 +269,29 @@ export default function CartDrawer() {
 
         {/* Content Section */}
         <div className="flex-1 p-5 sm:p-6">
+          {/* Thông báo chiến dịch đã kết thúc */}
+          {CAMPAIGN_INFO.isEnded && !successOrder && (
+            <div className="mb-5 rounded-2xl border border-amber-300 dark:border-amber-800 bg-amber-50/90 dark:bg-amber-950/40 p-4 text-xs text-amber-950 dark:text-amber-200 shadow-sm">
+              <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-300">
+                <AlertCircle className="size-4 shrink-0 text-[#df8143]" />
+                <span>Chiến dịch đã khép lại trọn vẹn</span>
+              </div>
+              <p className="mt-1 text-[11.5px] leading-relaxed">
+                Hệ thống đã dừng tiếp nhận đơn hàng mới từ ngày 17/10/2026. Nguồn lực thu được sẽ được phối hợp cùng Câu lạc bộ trong hoạt động thiện nguyện sắp tới. Quý khách có thể xem lại lịch sử các đơn hàng tại mục Tra cứu đơn.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsCartOpen(false);
+                  setIsOrdersDrawerOpen(true);
+                }}
+                className="mt-2.5 inline-flex items-center gap-1.5 font-bold text-[#df8143] hover:text-[#c44719] transition underline underline-offset-2"
+              >
+                Tra cứu đơn hàng của tôi &rarr;
+              </button>
+            </div>
+          )}
+
           {/* Nếu đặt hàng thành công */}
           {successOrder ? (
             <div className="flex flex-col items-center justify-center text-center py-10">
@@ -1019,72 +1047,83 @@ export default function CartDrawer() {
                   </div>
                 </div>
 
-                {/* QR Code Chuyển khoản VietQR */}
-                <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center space-y-3">
-                  <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#315444]">
-                    <QrCode className="size-4 text-[#df8143]" />
-                    <span>Mã QR thanh toán VietQR (Tự động nhận diện)</span>
+                {/* QR Code Chuyển khoản VietQR hoặc Thông báo Đóng cổng */}
+                {CAMPAIGN_INFO.isEnded ? (
+                  <div className="mt-3 rounded-2xl border border-amber-300 dark:border-amber-800 bg-amber-50/90 dark:bg-amber-950/30 p-5 text-center space-y-2">
+                    <p className="text-sm font-bold text-amber-900 dark:text-amber-200">
+                      Cổng thanh toán &amp; đặt hàng đã chính thức đóng
+                    </p>
+                    <p className="text-xs text-amber-800 dark:text-amber-300/90 leading-relaxed">
+                      Chiến dịch &ldquo;Hành Trình Dòng Nước Về Nguồn&rdquo; đã hoàn tất giai đoạn gây quỹ vào ngày 17/10/2026. Cảm ơn sự đồng hành và ủng hộ nhiệt tình của bạn!
+                    </p>
                   </div>
-                  <div className="mx-auto size-52 overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-neutral-200">
-                    <img
-                      src={vietQrUrl}
-                      alt="Mã QR chuyển khoản VietQR"
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                  <p className="text-sm font-bold text-[var(--brand-heading)]">
-                    {CAMPAIGN_INFO.banking.accountName}
-                  </p>
+                ) : (
+                  <div className="mt-3 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-center space-y-3">
+                    <div className="flex items-center justify-center gap-1.5 text-xs font-bold text-[#315444]">
+                      <QrCode className="size-4 text-[#df8143]" />
+                      <span>Mã QR thanh toán VietQR (Tự động nhận diện)</span>
+                    </div>
+                    <div className="mx-auto size-52 overflow-hidden rounded-xl bg-white p-2 shadow-sm border border-neutral-200">
+                      <img
+                        src={vietQrUrl}
+                        alt="Mã QR chuyển khoản VietQR"
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                    <p className="text-sm font-bold text-[var(--brand-heading)]">
+                      {CAMPAIGN_INFO.banking.accountName}
+                    </p>
 
-                  <div className="text-xs space-y-2 text-left bg-[var(--brand-surface)] rounded-xl p-3 border border-[var(--brand-border)]">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--brand-muted)]">Số tài khoản:</span>
-                      <div className="flex items-center gap-1.5 font-semibold text-[var(--brand-heading)]">
-                        <span>{CAMPAIGN_INFO.banking.bankId} - {CAMPAIGN_INFO.banking.accountNo}</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(CAMPAIGN_INFO.banking.accountNo, "form-stk")}
-                          className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
-                          title="Sao chép STK"
-                        >
-                          {copiedKey === "form-stk" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
-                        </button>
+                    <div className="text-xs space-y-2 text-left bg-[var(--brand-surface)] rounded-xl p-3 border border-[var(--brand-border)]">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--brand-muted)]">Số tài khoản:</span>
+                        <div className="flex items-center gap-1.5 font-semibold text-[var(--brand-heading)]">
+                          <span>{CAMPAIGN_INFO.banking.bankId} - {CAMPAIGN_INFO.banking.accountNo}</span>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(CAMPAIGN_INFO.banking.accountNo, "form-stk")}
+                            className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                            title="Sao chép STK"
+                          >
+                            {copiedKey === "form-stk" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--brand-muted)]">Số tiền:</span>
+                        <div className="flex items-center gap-1.5 font-bold text-[#df8143]">
+                          <span>{total.toLocaleString("vi-VN")}đ</span>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(total.toString(), "form-amount")}
+                            className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                            title="Sao chép số tiền"
+                          >
+                            {copiedKey === "form-amount" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[var(--brand-muted)]">Nội dung CK:</span>
+                        <div className="flex items-center gap-1.5 font-bold text-[#b93815] dark:text-[#f39c5b]">
+                          <span>{transferMemo}</span>
+                          <button
+                            type="button"
+                            onClick={() => copyToClipboard(transferMemo, "form-memo")}
+                            className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
+                            title="Sao chép nội dung"
+                          >
+                            {copiedKey === "form-memo" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--brand-muted)]">Số tiền:</span>
-                      <div className="flex items-center gap-1.5 font-bold text-[#df8143]">
-                        <span>{total.toLocaleString("vi-VN")}đ</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(total.toString(), "form-amount")}
-                          className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
-                          title="Sao chép số tiền"
-                        >
-                          {copiedKey === "form-amount" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
-                        </button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[var(--brand-muted)]">Nội dung CK:</span>
-                      <div className="flex items-center gap-1.5 font-bold text-[#b93815] dark:text-[#f39c5b]">
-                        <span>{transferMemo}</span>
-                        <button
-                          type="button"
-                          onClick={() => copyToClipboard(transferMemo, "form-memo")}
-                          className="p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800 text-[#315444]"
-                          title="Sao chép nội dung"
-                        >
-                          {copiedKey === "form-memo" ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
 
-                  <p className="text-[11px] text-[var(--brand-muted)] italic">
-                    💡 Vui lòng giữ đúng nội dung <strong>{transferMemo}</strong> khi chuyển khoản để nhóm The Boys nhận diện và xác nhận đơn của bạn nhanh nhất nhé!
-                  </p>
-                </div>
+                    <p className="text-[11px] text-[var(--brand-muted)] italic">
+                      💡 Vui lòng giữ đúng nội dung <strong>{transferMemo}</strong> khi chuyển khoản để nhóm The Boys nhận diện và xác nhận đơn của bạn nhanh nhất nhé!
+                    </p>
+                  </div>
+                )}
 
                 {/* Error message if any */}
                 {errorMessage && (
@@ -1096,13 +1135,23 @@ export default function CartDrawer() {
 
                 {/* Submit Button */}
                 <div className="pt-2">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full rounded-2xl bg-[#315444] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#315444]/25 hover:bg-[#243e33] active:scale-95 transition disabled:opacity-70 disabled:cursor-wait"
-                  >
-                    {isSubmitting ? "Đang gửi đơn hàng..." : "Xác nhận đặt hàng"}
-                  </button>
+                  {CAMPAIGN_INFO.isEnded ? (
+                    <button
+                      type="button"
+                      disabled
+                      className="w-full rounded-2xl bg-neutral-200 dark:bg-neutral-800 py-3.5 text-sm font-bold text-neutral-500 dark:text-neutral-400 cursor-not-allowed select-none"
+                    >
+                      Chiến dịch đã khép lại — Cổng đặt hàng đã đóng
+                    </button>
+                  ) : (
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full rounded-2xl bg-[#315444] py-3.5 text-sm font-bold text-white shadow-lg shadow-[#315444]/25 hover:bg-[#243e33] active:scale-95 transition disabled:opacity-70 disabled:cursor-wait"
+                    >
+                      {isSubmitting ? "Đang gửi đơn hàng..." : "Xác nhận đặt hàng"}
+                    </button>
+                  )}
                 </div>
 
                 {/* Link phụ chuyển sang Đơn của tôi */}
