@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
-import { Home, Store, Package, ShoppingBag } from "lucide-react";
+import { Home, Store, Package, ShoppingBag, Heart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { CAMPAIGN_INFO } from "@/data/campaign";
 
 export default function MobileBottomNav() {
   const {
@@ -74,24 +75,37 @@ export default function MobileBottomNav() {
           </span>
         </button>
 
-        {/* 4. Giỏ hàng */}
-        <button
-          type="button"
-          onClick={() => setIsCartOpen(true)}
-          className="relative flex flex-col items-center justify-center py-1 text-[var(--brand-muted)] hover:text-[#df8143] active:scale-95 transition group"
-        >
-          <div className="relative">
-            <ShoppingBag className="size-5 text-[#df8143] transition-transform group-hover:scale-110" />
-            {totalQuantity > 0 && (
-              <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[#df8143] text-[9.5px] font-bold text-white shadow-sm ring-2 ring-[var(--brand-surface)] animate-pulse">
-                {totalQuantity}
-              </span>
-            )}
-          </div>
-          <span className="text-[10.5px] font-semibold tracking-tight mt-1 text-[var(--brand-heading)]">
-            Giỏ hàng
-          </span>
-        </button>
+        {/* 4. Giỏ hàng hoặc Bảng Vàng */}
+        {CAMPAIGN_INFO.isEnded ? (
+          <button
+            type="button"
+            onClick={() => scrollToSection("donate")}
+            className="relative flex flex-col items-center justify-center py-1 text-[var(--brand-muted)] hover:text-[#df8143] active:scale-95 transition group"
+          >
+            <Heart className="size-5 text-[#df8143] transition-transform group-hover:scale-110" />
+            <span className="text-[10.5px] font-semibold tracking-tight mt-1 text-[var(--brand-heading)]">
+              Bảng Vàng
+            </span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setIsCartOpen(true)}
+            className="relative flex flex-col items-center justify-center py-1 text-[var(--brand-muted)] hover:text-[#df8143] active:scale-95 transition group"
+          >
+            <div className="relative">
+              <ShoppingBag className="size-5 text-[#df8143] transition-transform group-hover:scale-110" />
+              {totalQuantity > 0 && (
+                <span className="absolute -top-1.5 -right-2.5 flex h-4 min-w-4 px-1 items-center justify-center rounded-full bg-[#df8143] text-[9.5px] font-bold text-white shadow-sm ring-2 ring-[var(--brand-surface)] animate-pulse">
+                  {totalQuantity}
+                </span>
+              )}
+            </div>
+            <span className="text-[10.5px] font-semibold tracking-tight mt-1 text-[var(--brand-heading)]">
+              Giỏ hàng
+            </span>
+          </button>
+        )}
       </div>
     </nav>
   );

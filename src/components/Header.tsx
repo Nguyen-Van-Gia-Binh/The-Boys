@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Sun, Moon, ShoppingBag, Menu, X, Heart, Search, User, Sparkles, Store, Calendar, PhoneCall } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { CAMPAIGN_INFO } from "@/data/campaign";
 
 export default function Header() {
   const {
@@ -66,7 +67,7 @@ export default function Header() {
             className="flex items-center gap-1.5 font-bold text-[#df8143] hover:text-[#c4692e] transition"
           >
             <Heart className="size-3.5 fill-[#df8143]" />
-            <span>Ủng hộ quỹ</span>
+            <span>{CAMPAIGN_INFO.isEnded ? "Bảng vàng tri ân" : "Ủng hộ quỹ"}</span>
           </a>
           <a href="#journey" className="transition hover:text-[#df8143]">
             Hành trình tri ân

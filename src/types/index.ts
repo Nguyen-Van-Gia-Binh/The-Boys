@@ -6,6 +6,14 @@ export interface ComboGift {
   description?: string;
 }
 
+export interface CampaignArchiveInfo {
+  statusText: string;
+  completionDate: string;
+  headline: string;
+  message: string;
+  thankYou: string;
+}
+
 export interface Product {
   id: string;
   name: string;

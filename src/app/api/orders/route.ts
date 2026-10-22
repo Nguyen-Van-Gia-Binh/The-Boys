@@ -1,8 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { OrderPayload } from "@/types";
+import { CAMPAIGN_INFO } from "@/data/campaign";
 
 export async function POST(req: NextRequest) {
   try {
+    if (CAMPAIGN_INFO.isEnded) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Chiến dịch đã kết thúc thành công tốt đẹp! Hệ thống đã dừng tiếp nhận đơn hàng mới. Cảm ơn bạn đã luôn quan tâm và đồng hành cùng The Boys.",
+        },
+        { status: 403 }
+      );
+    }
+
     const body: OrderPayload = await req.json();
 
     // Basic Validation

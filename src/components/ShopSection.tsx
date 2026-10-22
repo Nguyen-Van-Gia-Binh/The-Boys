@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { MapPin, Calendar, Sparkles, Coffee, UtensilsCrossed, Flower2, Gift } from "lucide-react";
-import { PRODUCTS } from "@/data/campaign";
+import { PRODUCTS, CAMPAIGN_INFO } from "@/data/campaign";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductCategory } from "@/types";
 
@@ -36,21 +36,37 @@ export default function ShopSection() {
           </h2>
         </div>
 
-        {/* Delivery Notice Card */}
+        {/* Delivery / Closure Notice Card */}
         <aside
-          aria-label="Lưu ý giao hàng"
+          aria-label="Lưu ý gian hàng"
           className="flex max-w-md items-start gap-3.5 rounded-2xl border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] p-4 text-xs sm:text-sm leading-relaxed text-[var(--brand-heading)] shadow-sm"
         >
-          <MapPin className="mt-0.5 size-5 shrink-0 text-[#df8143]" />
-          <div>
-            <p>
-              Chỉ giao hàng tại khuôn viên trường <strong>Đại học FPT cơ sở TP.HCM</strong>.
-            </p>
-            <p className="mt-1 text-xs text-[var(--brand-muted)] flex items-center gap-1">
-              <Calendar className="size-3.5 text-[#315444]" />
-              Mở bán đợt 1: <strong>13/10/2026</strong> · Sự kiện chính: <strong>17/10/2026</strong>.
-            </p>
-          </div>
+          {CAMPAIGN_INFO.isEnded ? (
+            <>
+              <Calendar className="mt-0.5 size-5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+              <div>
+                <p className="font-semibold">
+                  Hoạt động bán hàng gây quỹ đã <strong>hoàn tất</strong> vào ngày 17/10/2026.
+                </p>
+                <p className="mt-1 text-xs text-[var(--brand-muted)]">
+                  Nguồn lực thu được từ các đơn hàng sẽ được tổng hợp để cùng Câu lạc bộ thực hiện hoạt động tri ân.
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              <MapPin className="mt-0.5 size-5 shrink-0 text-[#df8143]" />
+              <div>
+                <p>
+                  Chỉ giao hàng tại khuôn viên trường <strong>Đại học FPT cơ sở TP.HCM</strong>.
+                </p>
+                <p className="mt-1 text-xs text-[var(--brand-muted)] flex items-center gap-1">
+                  <Calendar className="size-3.5 text-[#315444]" />
+                  Mở bán đợt 1: <strong>13/10/2026</strong> · Sự kiện chính: <strong>17/10/2026</strong>.
+                </p>
+              </div>
+            </>
+          )}
         </aside>
       </div>
 

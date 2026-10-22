@@ -30,7 +30,15 @@ export default function Hero() {
 
         {/* Subtitle */}
         <p className="mt-7 max-w-md text-base leading-7 text-[var(--brand-muted)]">
-          Lợi nhuận từ mỗi món bạn mua sẽ được gom góp thành <strong>20 phần quà đặc biệt</strong> (sữa Ensure Gold, bánh Solite, sữa Nutifood &amp; những bức thư tri ân viết tay) gửi đến các chú thương binh nhiễm chất độc da cam.
+          {CAMPAIGN_INFO.isEnded ? (
+            <>
+              Chiến dịch bán hàng và tiếp nhận gây quỹ đã chính thức khép lại. Sự ủng hộ và tình cảm từ Quý vị là nguồn động viên quý giá sẽ cùng nhóm <strong>The Boys và Câu lạc bộ đồng hành</strong> mang yêu thương gửi đến các chú thương binh nhiễm chất độc da cam.
+            </>
+          ) : (
+            <>
+              Lợi nhuận từ mỗi món bạn mua sẽ được gom góp thành <strong>20 phần quà đặc biệt</strong> (sữa Ensure Gold, bánh Solite, sữa Nutifood &amp; những bức thư tri ân viết tay) gửi đến các chú thương binh nhiễm chất độc da cam.
+            </>
+          )}
         </p>
 
         {/* Action Buttons */}
@@ -39,14 +47,14 @@ export default function Hero() {
             href="#shop"
             className="inline-flex items-center gap-2 sm:gap-3 rounded-full bg-[#315444] px-6 sm:px-7 py-3 sm:py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#315444]/20 transition hover:bg-[#243e33] active:scale-95"
           >
-            Ghé gian hàng <ArrowRight className="size-4" />
+            {CAMPAIGN_INFO.isEnded ? "Xem menu kỷ niệm" : "Ghé gian hàng"} <ArrowRight className="size-4" />
           </a>
           <a
             href="#donate"
             className="inline-flex items-center gap-2 rounded-full border border-[#df8143] bg-[#df8143]/10 px-4 sm:px-5 py-3 sm:py-3.5 text-sm font-semibold text-[#df8143] hover:bg-[#df8143] hover:text-white transition active:scale-95 shadow-xs"
           >
             <Heart className="size-4 fill-current" />
-            <span>Ủng hộ quỹ tri ân</span>
+            <span>{CAMPAIGN_INFO.isEnded ? "Bảng vàng tri ân" : "Ủng hộ quỹ tri ân"}</span>
           </a>
           <a
             href="#journey"

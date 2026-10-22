@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Check, Sparkles, Gift, ChevronDown, Calendar, MapPin } from "lucide-react";
+import { Plus, Check, Sparkles, Gift, ChevronDown, Calendar, MapPin, CheckCircle2 } from "lucide-react";
 import { Product } from "@/types";
 import { useCart } from "@/context/CartContext";
+import { CAMPAIGN_INFO } from "@/data/campaign";
 
 interface ProductCardProps {
   product: Product;
@@ -21,6 +22,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const isFlowerOrCombo = product.category === "flower" || product.category === "combo" || product.isCombo;
 
   const handleAdd = () => {
+    if (CAMPAIGN_INFO.isEnded) return;
     addToCart(product, currentSize);
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1200);
@@ -150,26 +152,33 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Add to Cart button */}
         <div className="mt-5 pt-2">
-          <button
-            type="button"
-            onClick={handleAdd}
-            className={`flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition active:scale-95 ${isAdded
-                ? "bg-[#315444] text-white shadow-md"
-                : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-heading)] hover:border-[#315444] hover:bg-[#315444] hover:text-white"
-              }`}
-          >
-            {isAdded ? (
-              <>
-                <Check className="size-4" />
-                Đã thêm vào giỏ!
-              </>
-            ) : (
-              <>
-                <Plus className="size-4" />
-                Thêm vào giỏ
-              </>
-            )}
-          </button>
+          {CAMPAIGN_INFO.isEnded ? (
+            <div className="flex w-full items-center justify-center gap-1.5 rounded-2xl py-3 px-3 border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-xs font-semibold text-[var(--brand-muted)] select-none">
+              <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+              <span>Chiến dịch đã khép lại</span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleAdd}
+              className={`flex w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold transition active:scale-95 ${isAdded
+                  ? "bg-[#315444] text-white shadow-md"
+                  : "border border-[var(--brand-border)] bg-[var(--brand-surface-alt)] text-[var(--brand-heading)] hover:border-[#315444] hover:bg-[#315444] hover:text-white"
+                }`}
+            >
+              {isAdded ? (
+                <>
+                  <Check className="size-4" />
+                  Đã thêm vào giỏ!
+                </>
+              ) : (
+                <>
+                  <Plus className="size-4" />
+                  Thêm vào giỏ
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
